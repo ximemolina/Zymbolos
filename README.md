@@ -1,6 +1,6 @@
 # Zymbolos
 
-Proyecto de Compiladores e Intérpretes
+Proyecto de **Compiladores e Intérpretes**
 
 Desarrollado por:
 - Susana Feng

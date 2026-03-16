@@ -1,0 +1,16 @@
+name: Sync to GitLab
+on:
+  push:
+    branches: ['**']
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Push to GitLab
+        run: |
+          git remote add gitlab https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/ximemolina/Zymbolos.git
+          git push gitlab --all --force
+          git push gitlab --tags --force

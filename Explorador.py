@@ -1,7 +1,7 @@
 import sys
 import re
 
-TOKEN_SPECIFICATION = [
+Tokens = [
     ('COMENTARIO_MULT', r'__.*?__'),
     ('COMENTARIO_SOLO', r'_[^\n]*'),
 
@@ -25,28 +25,28 @@ TOKEN_SPECIFICATION = [
     ('CONFUSION', r'.'),
 ]
 
-tok_regex = '|'.join(f'(?P<{name}>{pattern})' for name, pattern in TOKEN_SPECIFICATION)
+tok_regex = '|'.join(f'(?P<{nombre}>{patron})' for nombre, patron in Tokens)
 
 
-def print_token(token_type, value, line, col):
-    print(f'<"{token_type}","{value}","line={line},col={col}">')
+def print_token(tipo_token, valor, linea, col):
+    print(f'<"{tipo_token}","{valor}","line={linea},col={col}">')
 
 
-def lexer(line, line_number):
-    for mo in re.finditer(tok_regex, line):
-        kind = mo.lastgroup
-        value = mo.group()
-        column = mo.start() + 1
+def lexer(linea, numero_linea):
+    for mo in re.finditer(tok_regex, linea):
+        tipo = mo.lastgroup
+        valor = mo.group()
+        columna = mo.start() + 1
 
-        if kind in ('SALTO', 'COMENTARIO_SOLO', 'COMENTARIO_MULT'):
+        if tipo in ('SALTO', 'COMENTARIO_SOLO', 'COMENTARIO_MULT'):
             continue
 
-        elif kind == 'CONFUSION':
-            print(f'ERROR LEXICO: símbolo inválido "{value}" en línea {line_number}, columna {column}')
+        elif tipo == 'CONFUSION':
+            print(f'ERROR LEXICO: símbolo inválido "{valor}" en línea {numero_linea}, columna {columna}')
             sys.exit(1)
 
         else:
-            print_token(kind, value, line_number, column)
+            print_token(tipo, valor, numero_linea, columna)
 
 
 def main():
@@ -54,14 +54,14 @@ def main():
         print("Uso: python Explorador.py <archivo>")
         sys.exit(1)
 
-    filename = sys.argv[1]
+    archivo = sys.argv[1]
 
     try:
-        with open(filename, 'r', encoding='utf-8') as file:
-            for line_number, line in enumerate(file, start=1):
-                lexer(line, line_number)
+        with open(archivo, 'r', encoding='utf-8') as file:
+            for numero_linea, linea in enumerate(file, start=1):
+                lexer(linea, numero_linea)
     except FileNotFoundError:
-        print(f"ERROR: No se pudo abrir el archivo '{filename}'")
+        print(f"ERROR: No se pudo abrir el archivo '{archivo}'")
         sys.exit(1)
 
 

@@ -5,14 +5,14 @@ Tokens = [
     ('COMENTARIO_MULT', r'__.*?__'),
     ('COMENTARIO_SOLO', r'_[^\n]*'),
 
-    ('IO_OP', r'>>>|<<<|>>'),
+    ('IO_OP', r'>>>|<<<|>>|<<'),
     ('REL_OP', r'<=|>=|=='),
     ('LOGIC_OP', r'&&|\|\|'),
     ('INCREMENT', r'\+\+'),
 
     ('STRUCT', r'[.:@!#°¿?]'),
     ('DELIM', r'[{},()]'),
-    ('ASSIGN', r'\+=|-=|\*=|/=|%='),
+    ('ASSIGN', r'\+=|-=|\*=|/=|='),
     ('ARITH_OP', r'[+\-*/%^<>]'),
 
     ('STRING', r'"[^"\n]*"'),

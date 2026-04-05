@@ -1,0 +1,12 @@
+. ContarEnCadena >> NNN << LLL texto CCC cadena NNN len
+!
+: i NNN = 0 !
+: res NNN = 0 !
+@ i < len !
+¿ texto[i] == cadena !
+res = res + 1 !
+¿!
+i = i + 1 !
+@!
+>> res !
+.!

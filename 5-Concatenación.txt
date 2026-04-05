@@ -1,0 +1,6 @@
+. UnirTexto >> STR << STR a STR b!
+: Res STR = "" !
+Res = a + " " !
+Res = Res + b !
+>> Res !
+.!

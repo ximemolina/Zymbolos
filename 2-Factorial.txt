@@ -1,0 +1,9 @@
+. Factorial >> NNN << NNN a !
+: Contador NNN = 1 !
+: Res NNN = 1 !
+@ Contador <= a !
+Res = Res * Contador !
+Contador = Contador + 1 !
+@!
+>> Res !
+.!

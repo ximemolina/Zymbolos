@@ -18,7 +18,7 @@ Tokens = [
     ('STRING', r'"[^"\n]*"'),
     ('NUMERO', r'-?\d+(\.\d+)?'),
     ('BOOL', r'\b(VV|FF)\b'),
-    ('TIPO', r'\b(NNN|CCC|BBB|OOO|EEE|LLL|STR)\b'),
+    ('TIPO', r'\b(NNN|CCC|BBB|OOO|EEE|LLL)\b'),
     ('IDENTIFICADOR', r'[a-zA-Z_ñÑ][a-zA-Z0-9_ñÑ]*'),
 
     ('SALTO', r'[ \t]+'),

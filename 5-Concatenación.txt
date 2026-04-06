@@ -1,5 +1,5 @@
 . UnirTexto >> STR << STR a STR b!
-: Res STR = "" !
+: Res CCC = "" !
 Res = a + " " !
 Res = Res + b !
 >> Res !

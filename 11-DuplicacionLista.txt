@@ -1,0 +1,32 @@
+. ContarApariciones >> NNN << LLL lista NNN len CCC texto !
+
+: res NNN = 0 !
+: i NNN = 0 !
+
+@ i < len !
+¿ lista[i] == texto !
+res = res + 1 !
+¿!
+i = i + 1 !
+@!
+
+>> res !
+.!
+
+. HayDuplicados >> BBB << LLL lista NNN len !
+
+: i NNN = 0 !
+: res NNN = 0 !
+
+@ i < len !
+res = ContarApariciones lista len lista[i] !
+
+¿ res > 1 !
+>> VV!
+¿!
+
+i = i + 1 !
+@!
+
+>> FF !
+.!

@@ -1,0 +1,17 @@
+. Promedio >> NNN << LLL lista NNN len !
+: i NNN = 0 !
+: res NNN = 0 !
+
+¿ len == 0 !
+>> res !
+¿!
+
+@ i < len !
+res = res + lista[i] !
+i = i + 1 !
+@!
+
+res = res / len !
+
+>> res !
+.!

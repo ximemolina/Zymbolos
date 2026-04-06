@@ -6,20 +6,20 @@ Tokens = [
     ('COMENTARIO_SOLO', r'_[^\n]*'),
 
     ('IO_OP', r'>>>|<<<|>>|<<'),
-    ('REL_OP', r'<=|>=|=='),
+    ('REL_OP', r'<=|>=|==|<|>'),
     ('LOGIC_OP', r'&&|\|\|'),
     ('INCREMENT', r'\+\+'),
 
     ('STRUCT', r'[.:@!#°¿?]'),
-    ('DELIM', r'[{},()]'),
+    ('DELIM', r'[\[\]{},()]'),
     ('ASSIGN', r'\+=|-=|\*=|/=|='),
-    ('ARITH_OP', r'[+\-*/%^<>]'),
+    ('ARITH_OP', r'[+\-*/%^]'),
 
     ('STRING', r'"[^"\n]*"'),
     ('NUMERO', r'-?\d+(\.\d+)?'),
     ('BOOL', r'\b(VV|FF)\b'),
-    ('TIPO', r'\b(NNN|CCC|BBB|OOO|EEE)\b'),
-    ('IDENTIFICADOR', r'[a-zA-Z_][a-zA-Z0-9_]*'),
+    ('TIPO', r'\b(NNN|CCC|BBB|OOO|EEE|LLL|STR)\b'),
+    ('IDENTIFICADOR', r'[a-zA-Z_ñÑ][a-zA-Z0-9_ñÑ]*'),
 
     ('SALTO', r'[ \t]+'),
     ('CONFUSION', r'.'),
@@ -43,7 +43,8 @@ def lexer(linea, numero_linea):
 
         elif tipo == 'CONFUSION':
             print(f'ERROR LEXICO: símbolo inválido "{valor}" en línea {numero_linea}, columna {columna}')
-            sys.exit(1)
+            #sys.exit(1) para que no se cierre con el primer error.
+
 
         else:
             print_token(tipo, valor, numero_linea, columna)
@@ -62,7 +63,7 @@ def main():
                 lexer(linea, numero_linea)
     except FileNotFoundError:
         print(f"ERROR: No se pudo abrir el archivo '{archivo}'")
-        sys.exit(1)
+        #sys.exit(1)  para que no se cierre con el primer error.
 
 
 if __name__ == "__main__":

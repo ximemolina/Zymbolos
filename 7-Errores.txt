@@ -1,0 +1,7 @@
+. MiFuncion !
+: precio NNN = 100 $ !
+¿ precio > 50 !
+>> "El precio es alto" ;
+¿!
+res = 10 & 5 !
+.!

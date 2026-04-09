@@ -1,6 +1,13 @@
 import sys
 import re
 
+class Token:
+    def __init__(self, tipo, valor, linea, columna):
+        self.tipo = tipo
+        self.valor = valor
+        self.linea = linea
+        self.columna = columna
+
 Tokens = [
     ('COMENTARIO_MULT', r'__.*?__'),
     ('COMENTARIO_SOLO', r'_[^\n]*'),
@@ -33,6 +40,7 @@ def print_token(tipo_token, valor, linea, col):
 
 
 def lexer(linea, numero_linea):
+    tokens_encontrados = []
     for mo in re.finditer(tok_regex, linea):
         tipo = mo.lastgroup
         valor = mo.group()
@@ -48,4 +56,7 @@ def lexer(linea, numero_linea):
 
         else:
             print_token(tipo, valor, numero_linea, columna)
+            tokens_encontrados.append(Token(tipo, valor, numero_linea, columna))
+
+    return tokens_encontrados
 

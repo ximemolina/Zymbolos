@@ -1,0 +1,35 @@
+from enum import Enum
+
+##################################################################################
+#### Clases para darle estructura a los nodos del árbol de análisis sintáctico ###
+##################################################################################
+
+
+# Definir el nodo raíz del árbol de análisis sintáctico abstracto (ASA)
+class Asa:
+    def __init__(self):
+        self.raiz = None
+
+
+# Definir el nodo del árbol de análisis sintáctico abstracto (ASA)
+class Nodo:
+    def __init__(self, tipo, valor=None, nodos=None):
+        self.tipo = tipo  # es un enum TipoNodo
+        self.contenido = valor  # es un string opcional (para los nodos hoja)
+        self.nodos_hijos = nodos or []  # es una lista
+
+
+# Definir los tipos de nodos que produce el analizador (son las reglas de la gramática)
+"""!!!!!!me dio pereza agregar todas las reglas, vayan agregando las suyas :P  !!!!!!!!!!!!!!!!!!!!!!!!!!!!! """
+
+
+class TipoNodo(Enum):
+    TERMINO = "TERMINO"
+    CADENA = "CADENA"
+    NUMERO = "NUMERO"
+    BOOL = "BOOL"
+    TIPO = "TIPO"
+    FRASE = "FRASE"
+    COMPARATIVO = "COMPARATIVO"
+    COMPUERTA_LOGICA = "COMPUERTA_LOGICA"
+    SIMBOLO = "SIMBOLO"

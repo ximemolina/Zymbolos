@@ -46,16 +46,17 @@ class Analizador:
     #! ------------Las declaré para que no me dé algo raro cuando llame a una función que no existe--------------------------------
     def __analizar_bloque(self):
         """Bloque::=  ( Bucles | Condicionales | FuncionesPredeterminadas |
-        DeclaraciónVariables | Comentarios | LlamadaFuncion | Asignacion | AsignacionElementoLista)+
+        DeclaraciónVariables | Comentarios | LlamadaFuncion | Asignacion | AsignacionElementoLista)+ #! Estos comentarios se pueden quitar o corregir a como esta en la gramatica corregida
+
         """
 
     def __analizar_expresiones_matematicas(self):
-        """ExpresionesMatematicas ::=  Termino (Simbolo Termino)*"""
+        """ExpresionesMatematicas ::=  Termino (Simbolo Termino)*"""  #! Estos comentarios se pueden quitar o corregir a como esta en la gramatica corregida
 
     #! --------------------------------------------
 
     def __analizar_condicionales(self):
-        """Condicionales ::=  ¿(~)? Comparaciones ! Bloque  (¿”?” Comparaciones !  Bloque)* (“?” Bloque)? ¿!"""
+        """Condicionales ::=  ¿(~)? Valor Comparaciones ! Bloque  (¿”?” Valor Comparaciones !  Bloque)* (“?” Bloque)? ¿!"""
 
         nodos_nuevos = []
 
@@ -66,6 +67,9 @@ class Analizador:
             # Negación opcionar
             if self.token_actual.valor == "~":
                 self.__verificar("~")
+
+            # Primer valor obligatoria
+            nodos_nuevos += [self.__analizar_valor()]
 
             # Primera comparación obligatoria
             nodos_nuevos += [self.__analizar_comparaciones()]
@@ -83,6 +87,7 @@ class Analizador:
                         break
                     if self.token_actual.valor == "?":
                         self.__verificar("?")
+                        nodos_nuevos += [self.__analizar_valor()]
                         nodos_nuevos += [self.__analizar_comparaciones()]
 
                         self.__verificar("!")
@@ -111,33 +116,78 @@ class Analizador:
             return None
 
     def __analizar_bucles(self):
-        """Bucles ::= “@” (Comparaciones | Bool) ! Bloque “@”  “!”"""
+        """Bucles ::= “@” Valor (Comparaciones)? “!” Bloque “@”  “!” """ #!
 
         nodos_nuevos = []
 
         try:
             # Verificar apertura del bucle
             self.__verificar("@")
+            
+            # Verificar valor
+            nodos_nuevos += [self.__analizar_valor()]
 
-            # if self.token_actual.valor == ""
+            # Verificar comparaciones opcional
+            if self.token_actual.tipo == TipoToken.REL_OP:
+                nodos_nuevos += [self.__analizar_comparaciones()]
+
+            # Verficar componente obligatorio
+            self.__verificar("!")
+            
+            # Verificar bloque
+            nodos_nuevos += [self.__analizar_bloque()]
+
+            # Verifiar cierre de bucle
+            self.__verificar("@")
+            self.__verificar("!")
+
+            return Nodo(TipoNodo.BUCLES, nodos=nodos_nuevos) 
 
         except SyntaxError as e:
-            print(f"Error de sintaxis en condicional: {e}")
+            print(f"Error de sintaxis en bucle: {e}")
             return None
 
         except Exception as e:
-            print(f"Error inesperado en condicional: {e}")
+            print(f"Error inesperado en bucle: {e}")
             return None
 
     def __analizar_asignacion(self):
-        """Asignacion ::= “\” Frase "=" (Frase | Numero | Bool | ExpresionesMatematicas
-        | Comparaciones | Lista | Cadena) "!" """
+        """Asignacion ::= “\” Frase "=" (Valor (Comparaciones)? | Lista) "!" """
 
         nodos_nuevos = []
 
         try:
-            #! Hay ambigúedad
-            return None
+            # Verificar componente de apertura
+            self.__verificar("\\")
+
+            # Verificar frase
+            nodos_nuevos += [self.__analizar_frase]
+
+            # Verificar componente obligatorio
+            self.__verificar("=")
+
+            # Hay varios casos
+            # Caso 1: Valor (Comparaciones)?
+            if self.token_actual.tipo == TipoToken.NUMERO or self.token_actual.tipo == TipoToken.STRING \
+            or self.token_actual.tipo == TipoToken.IDENTIFICADOR or self.token_actual.tipo == TipoToken.BOOL \
+            or self.token_actual.tipo == TipoToken.ARITH_OP:
+                nodos_nuevos += [self.__analizar_valor()]
+
+                # Verificar si hay comparaciones
+                if self.token_actual.tipo == TipoToken.REL_OP:
+                    nodos_nuevos += [self.__analizar_comparaciones()]
+            # Caso 2: Lista
+            elif self.token_actual.valor == "{":
+                nodos_nuevos += [self.__analizar_lista()]
+            else:
+                raise Exception(
+                    f"ERROR: se esperaba un valor o una lista en línea {self.token_actual.linea}, columna {self.token_actual.columna}"
+                )
+
+            # Verificar cierre de bloque
+            self.__verificar("!")
+
+            return Nodo(TipoNodo.ASIGNACION, nodos=nodos_nuevos)
 
         except SyntaxError as e:
             print(f"Error de asignación: {e}")
@@ -189,8 +239,15 @@ class Analizador:
         nodos_nuevos = []
 
         try:
-            #! Hay ambigúedad
-            return None
+            # Verificar primera Comparacion
+            nodos_nuevos += [self.__analizar_comparacion()]
+
+            # Verificar si hay mas comparaciones adicionales
+            while (self.token_actual.tipo == TipoToken.LOGIC_OP):
+                nodos_nuevos += [self.__analizar_compuerta_logica()]
+                nodos_nuevos += [self.__analizar_comparacion()]
+
+            return Nodo(TipoNodo.COMPARACIONES, nodos=nodos_nuevos)
 
         except SyntaxError as e:
             print(f"Error en comparaciones: {e}")
@@ -201,13 +258,16 @@ class Analizador:
             return None
 
     def __analizar_comparacion(self):
-        """Comparacion ::=  Valor Comparativos Valor"""
+        """Comparacion ::=  (Comparativos Valor)*"""
 
         nodos_nuevos = []
 
         try:
-            #! Hay ambigúedad
-            return None
+            while (self.token_actual.tipo == TipoToken.REL_OP):
+                nodos_nuevos += [self.__analizar_comparativo()]
+                nodos_nuevos += [self.__analizar_valor()]
+
+            return Nodo(TipoNodo.COMPARACION, nodos=nodos_nuevos)
 
         except SyntaxError as e:
             print(f"Error en comparación: {e}")
@@ -235,7 +295,7 @@ class Analizador:
                 # Primer elemento
                 nodos_nuevos += [self.__analizar_termino()]
                 # Demás elementos
-                while self.token_actual.valor == ",":
+                while (self.token_actual.valor == ","):
                     self.__verificar(",")
                     nodos_nuevos += [self.__analizar_termino()]
 
@@ -262,29 +322,34 @@ class Analizador:
             self.__verificar("¨")
 
             # Verificar que sigue una frase
-            if self.token_actual.tipo == TipoToken.IDENTIFICADOR:
-                nodos_nuevos += [self.__analizar_frase()]
-            else:
-                raise Exception(
-                    f"""Se esperaba una frase en línea {self.token_actual.linea}, 
-                    columna {self.token_actual.columna}"""
-                )
+            nodos_nuevos += [self.__analizar_frase()]
+
+            #! Se deberia hacer asi o como arriba
+            # if self.token_actual.tipo == TipoToken.IDENTIFICADOR:
+            #     nodos_nuevos += [self.__analizar_frase()]
+            # else:
+            #     raise Exception(
+            #         f"""Se esperaba una frase en línea {self.token_actual.linea}, 
+            #         columna {self.token_actual.columna}"""
+            #     )
 
             # Verificar componente de apertura obligatoria
             self.__verificar("[")
 
             # Verificar que tenga un indice
-            #! Falta el caso de usar una expresion matematica, pero hay ambiguedad
-            if (
-                self.token_actual.tipo == TipoToken.NUMERO
-                or self.token_actual.tipo == TipoToken.IDENTIFICADOR
-            ):
-                nodos_nuevos += [self.__analizar_indice()]
-            else:
-                raise Exception(
-                    f"""Se esperaba un índice en línea {self.token_actual.linea}, 
-                    columna {self.token_actual.columna}"""
-                )
+            nodos_nuevos += [self.__analizar_indice()]
+
+            #! Se deberia hacer asi o como arriba
+            # if (
+            #     self.token_actual.tipo == TipoToken.NUMERO
+            #     or self.token_actual.tipo == TipoToken.IDENTIFICADOR
+            # ):
+            #     nodos_nuevos += [self.__analizar_indice()]
+            # else:
+            #     raise Exception(
+            #         f"""Se esperaba un índice en línea {self.token_actual.linea}, 
+            #         columna {self.token_actual.columna}"""
+            #     )
 
             # Verificar componente de cierre obligatoria
             self.__verificar("]")
@@ -300,13 +365,32 @@ class Analizador:
             return None
 
     def __analizar_valor(self):
-        """Valor ::=  Cadena | Numero | Frase | Bool | ExpresionesMatematicas"""
+        """Valor ::= Termino (ExpresionesMatematicas)? | Bool"""
 
         nodos_nuevos = []
 
         try:
-            #! Hay ambigúedad
-            return None
+            # Si es Termino
+            if (self.token_actual.tipo == TipoToken.NUMERO or
+                self.token_actual.tipo == TipoToken.IDENTIFICADOR or
+                self.token_actual.tipo == TipoToken.STRING):
+                nodos_nuevos += [self.__analizar_termino()]
+
+                # Verificar si hay expresion matematica
+                if (self.token_actual.tipo == TipoToken.ARITH_OP):
+                    nodos_nuevos += [self.__analizar_expresiones_matematicas()]
+
+            # Si es Bool
+            elif (self.token_actual.tipo == TipoToken.BOOL):
+                nodos_nuevos += [self.__analizar_bool()]
+
+            else:
+                raise Exception(
+                    f"""Se esperaba un término o un boleano {self.token_actual.linea}, 
+                    columna {self.token_actual.columna}"""
+                )
+            
+            return Nodo(TipoNodo.VALOR, nodos=nodos_nuevos)
 
         except SyntaxError as e:
             print(f"Error de valor: {e}")
@@ -317,19 +401,19 @@ class Analizador:
             return None
 
     def __analizar_indice(self):
-        """Indice ::= Numero | Frase | ExpresionesMatematicas"""
+        """Indice ::= Termino (ExpresionesMatematicas)?"""
 
         nodos_nuevos = []
 
         try:
-            # Si es número
-            if self.token_actual.tipo == TipoToken.NUMERO:
-                nodos_nuevos += [self.__analizar_numero()]
-            # Si es Frase
-            elif self.token_actual.tipo == TipoToken.IDENTIFICADOR:
-                nodos_nuevos += [self.__analizar_frase()]
-            # Si es Expresión matemática
-            #! Hay ambiguedad
+            # Hay Termino
+            nodos_nuevos += [self.__analizar_termino()]
+            
+            # Verificar si hay expresión matemática
+            if (self.token_actual.tipo == TipoToken.ARITH_OP):
+                nodos_nuevos += [self.__analizar_expresiones_matematicas()]
+
+            return Nodo(TipoNodo.INDICE, nodos=nodos_nuevos)
 
         except SyntaxError as e:
             print(f"Error de índice: {e}")

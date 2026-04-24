@@ -45,12 +45,12 @@ class Analizador:
 
     #! ------------Las declaré para que no me dé algo raro cuando llame a una función que no existe--------------------------------
     def __analizar_bloque(self):
-        """Bloque::=  ( Bucles | Condicionales | FuncionesPredeterminadas | 
+        """Bloque::=  ( Bucles | Condicionales | FuncionesPredeterminadas |
         DeclaraciónVariables | Comentarios | LlamadaFuncion | Asignacion | AsignacionElementoLista)+
         """
 
     def __analizar_expresiones_matematicas(self):
-        """ExpresionesMatematicas ::=  Termino (Simbolo Termino)*"""  
+        """ExpresionesMatematicas ::=  Termino (Simbolo Termino)*"""
 
     #! --------------------------------------------
 
@@ -112,7 +112,7 @@ class Analizador:
             return None
 
     def __analizar_bucles(self):
-        """Bucles ::= “@” Comparaciones ! Bloque “@”  “!”"""  
+        """Bucles ::= “@” Comparaciones ! Bloque “@”  “!”"""
 
         nodos_nuevos = []
 
@@ -164,9 +164,11 @@ class Analizador:
                 nodos_nuevos += [self.__analizar_bool()]
 
             # Caso 2: ExpresionesMatematicas
-            elif (self.token_actual.tipo == TipoToken.NUMERO or
-                  self.token_actual.tipo == TipoToken.IDENTIFICADOR or
-                  self.token_actual.tipo == TipoToken.STRING):
+            elif (
+                self.token_actual.tipo == TipoToken.NUMERO
+                or self.token_actual.tipo == TipoToken.IDENTIFICADOR
+                or self.token_actual.tipo == TipoToken.STRING
+            ):
                 nodos_nuevos += [self.__analizar_expresiones_matematicas()]
 
             # Caso 3: Lista
@@ -196,7 +198,7 @@ class Analizador:
         nodos_nuevos = []
 
         try:
-            # Verificar acceso a lista 
+            # Verificar acceso a lista
             nodos_nuevos += [self.__analizar_acceso_lista()]
 
             # Verifcar componente obligatoria

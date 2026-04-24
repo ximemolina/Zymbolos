@@ -45,18 +45,17 @@ class Analizador:
 
     #! ------------Las declaré para que no me dé algo raro cuando llame a una función que no existe--------------------------------
     def __analizar_bloque(self):
-        """Bloque::=  ( Bucles | Condicionales | FuncionesPredeterminadas |
-        DeclaraciónVariables | Comentarios | LlamadaFuncion | Asignacion | AsignacionElementoLista)+ #! Estos comentarios se pueden quitar o corregir a como esta en la gramatica corregida
-
+        """Bloque::=  ( Bucles | Condicionales | FuncionesPredeterminadas | 
+        DeclaraciónVariables | Comentarios | LlamadaFuncion | Asignacion | AsignacionElementoLista)+
         """
 
     def __analizar_expresiones_matematicas(self):
-        """ExpresionesMatematicas ::=  Termino (Simbolo Termino)*"""  #! Estos comentarios se pueden quitar o corregir a como esta en la gramatica corregida
+        """ExpresionesMatematicas ::=  Termino (Simbolo Termino)*"""  
 
     #! --------------------------------------------
 
     def __analizar_condicionales(self):
-        """Condicionales ::=  ¿(~)? Valor Comparaciones ! Bloque  (¿”?” Valor Comparaciones !  Bloque)* (“?” Bloque)? ¿!"""
+        """Condicionales ::=  ¿(~)? Comparaciones ! Bloque  (¿”?” Comparaciones !  Bloque)* (“?” Bloque)? ¿!"""
 
         nodos_nuevos = []
 
@@ -64,12 +63,9 @@ class Analizador:
             # Verificar apertura del condicional
             self.__verificar("¿")
 
-            # Negación opcionar
+            # Negación opcional
             if self.token_actual.valor == "~":
                 self.__verificar("~")
-
-            # Primer valor obligatoria
-            nodos_nuevos += [self.__analizar_valor()]
 
             # Primera comparación obligatoria
             nodos_nuevos += [self.__analizar_comparaciones()]
@@ -84,8 +80,8 @@ class Analizador:
                     self.__verificar("¿")
                     # Para validar que no es un cierre de condicional
                     if self.token_actual.valor == "!":
-                        break
-                    if self.token_actual.valor == "?":
+                        return Nodo(TipoNodo.CONDICIONALES, nodos=nodos_nuevos)
+                    elif self.token_actual.valor == "?":
                         self.__verificar("?")
                         nodos_nuevos += [self.__analizar_valor()]
                         nodos_nuevos += [self.__analizar_comparaciones()]
@@ -116,7 +112,7 @@ class Analizador:
             return None
 
     def __analizar_bucles(self):
-        """Bucles ::= “@” Valor (Comparaciones)? “!” Bloque “@”  “!”"""  #!
+        """Bucles ::= “@” Comparaciones ! Bloque “@”  “!”"""  
 
         nodos_nuevos = []
 
@@ -124,12 +120,8 @@ class Analizador:
             # Verificar apertura del bucle
             self.__verificar("@")
 
-            # Verificar valor
-            nodos_nuevos += [self.__analizar_valor()]
-
-            # Verificar comparaciones opcional
-            if self.token_actual.tipo == TipoToken.REL_OP:
-                nodos_nuevos += [self.__analizar_comparaciones()]
+            # Verificar comparaciones
+            nodos_nuevos += [self.__analizar_comparaciones()]
 
             # Verficar componente obligatorio
             self.__verificar("!")
@@ -152,7 +144,7 @@ class Analizador:
             return None
 
     def __analizar_asignacion(self):
-        """Asignacion ::= “\” Frase "=" (Valor (Comparaciones)? | Lista) "!" """
+        """Asignacion ::= “\” Frase "=" (Bool | ExpresionesMatematicas | Lista) "!" """
 
         nodos_nuevos = []
 
@@ -167,25 +159,22 @@ class Analizador:
             self.__verificar("=")
 
             # Hay varios casos
-            # Caso 1: Valor (Comparaciones)?
-            if (
-                self.token_actual.tipo == TipoToken.NUMERO
-                or self.token_actual.tipo == TipoToken.STRING
-                or self.token_actual.tipo == TipoToken.IDENTIFICADOR
-                or self.token_actual.tipo == TipoToken.BOOL
-                or self.token_actual.tipo == TipoToken.ARITH_OP
-            ):
-                nodos_nuevos += [self.__analizar_valor()]
+            # Caso 1: Bool
+            if self.token_actual.tipo == TipoToken.BOOL:
+                nodos_nuevos += [self.__analizar_bool()]
 
-                # Verificar si hay comparaciones
-                if self.token_actual.tipo == TipoToken.REL_OP:
-                    nodos_nuevos += [self.__analizar_comparaciones()]
-            # Caso 2: Lista
+            # Caso 2: ExpresionesMatematicas
+            elif (self.token_actual.tipo == TipoToken.NUMERO or
+                  self.token_actual.tipo == TipoToken.IDENTIFICADOR or
+                  self.token_actual.tipo == TipoToken.STRING):
+                nodos_nuevos += [self.__analizar_expresiones_matematicas()]
+
+            # Caso 3: Lista
             elif self.token_actual.valor == "{":
                 nodos_nuevos += [self.__analizar_lista()]
             else:
                 raise Exception(
-                    f"ERROR: se esperaba un valor o una lista en línea {self.token_actual.linea}, columna {self.token_actual.columna}"
+                    f"ERROR: se esperaba un booleano, una expresión matemática o lista en línea {self.token_actual.linea}, columna {self.token_actual.columna}"
                 )
 
             # Verificar cierre de bloque
@@ -207,25 +196,14 @@ class Analizador:
         nodos_nuevos = []
 
         try:
-            # Verificar acceso a lista que inicia con ¨
-            if self.token_actual.valor == "¨":
-                nodos_nuevos += [self.__analizar_acceso_lista()]
-            else:
-                raise Exception(
-                    f"""Se esperaba un acceso a lista en línea {self.token_actual.linea}, 
-                    columna {self.token_actual.columna}"""
-                )
+            # Verificar acceso a lista 
+            nodos_nuevos += [self.__analizar_acceso_lista()]
 
             # Verifcar componente obligatoria
             self.__verificar("=")
 
             # Verificar termino
-            if (
-                self.token_actual.tipo == TipoToken.NUMERO
-                or self.token_actual.tipo == TipoToken.IDENTIFICADOR
-                or self.token_actual.tipo == TipoToken.STRING
-            ):
-                nodos_nuevos += [self.__analizar_termino()]
+            nodos_nuevos += [self.__analizar_termino()]
 
             return Nodo(TipoNodo.ASIGNACIONELEMENTOLISTA, nodos=nodos_nuevos)
 
@@ -262,11 +240,15 @@ class Analizador:
             return None
 
     def __analizar_comparacion(self):
-        """Comparacion ::=  (Comparativos Valor)*"""
+        """Comparacion ::=  Valor (Comparativos Valor)*"""
 
         nodos_nuevos = []
 
         try:
+            # Verificar Valor
+            nodos_nuevos += [self.__analizar_valor()]
+
+            # Verificar comparaciones adicionales
             while self.token_actual.tipo == TipoToken.REL_OP:
                 nodos_nuevos += [self.__analizar_comparativo()]
                 nodos_nuevos += [self.__analizar_valor()]
@@ -328,32 +310,11 @@ class Analizador:
             # Verificar que sigue una frase
             nodos_nuevos += [self.__analizar_frase()]
 
-            #! Se deberia hacer asi o como arriba
-            # if self.token_actual.tipo == TipoToken.IDENTIFICADOR:
-            #     nodos_nuevos += [self.__analizar_frase()]
-            # else:
-            #     raise Exception(
-            #         f"""Se esperaba una frase en línea {self.token_actual.linea},
-            #         columna {self.token_actual.columna}"""
-            #     )
-
             # Verificar componente de apertura obligatoria
             self.__verificar("[")
 
             # Verificar que tenga un indice
             nodos_nuevos += [self.__analizar_indice()]
-
-            #! Se deberia hacer asi o como arriba
-            # if (
-            #     self.token_actual.tipo == TipoToken.NUMERO
-            #     or self.token_actual.tipo == TipoToken.IDENTIFICADOR
-            # ):
-            #     nodos_nuevos += [self.__analizar_indice()]
-            # else:
-            #     raise Exception(
-            #         f"""Se esperaba un índice en línea {self.token_actual.linea},
-            #         columna {self.token_actual.columna}"""
-            #     )
 
             # Verificar componente de cierre obligatoria
             self.__verificar("]")

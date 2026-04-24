@@ -458,7 +458,7 @@ class Analizador:
             return nodo
         else:
             raise Exception(
-                f"ERROR: se esperaba un símbolo aritmético: +, -, /, %, &, *, ^, en línea {self.token_actual.linea}, columna {self.token_actual.columna}"
+                f"ERROR: se esperaba un símbolo aritmético: +, -, /, %, *, ^, en línea {self.token_actual.linea}, columna {self.token_actual.columna}"
             )
 
     def __analizar_cadena(self):

@@ -1,19 +1,18 @@
 . EsPrimo >> BBB << NNN num !
-
 : i NNN = 2 !
 
 ¿ num < 2 !
 >> FF !
-¿!
+¿ !
 
 ¿ num > 2 !
 @ i < num !
 ¿ num % i == 0 !
 >> FF !
-¿!
-i = i + 1 !
-@!
-¿!
+¿ !
+\ i = i + 1 !
+@ !
+¿ !
 
 >> VV !
-.! 
+. !

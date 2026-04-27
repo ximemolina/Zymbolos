@@ -1,21 +1,19 @@
 . EsPalindromo >> BBB << CCC texto NNN len !
-
 : primero NNN = 0 !
 : ultimo NNN = len - 1 !
 
-		¿ len < 1 !
-		>> FF !
-		¿!
-
-		@ primero < ultimo !
-¿ texto[primero] == texto[ultimo] !
-primero = primero + 1 !
-ultimo = ultimo - 1 !
-	? 
+¿ len < 1 !
 >> FF !
-¿!
+¿ !
 
-@!
+@ primero < ultimo !
+¿ ¨texto[primero] == ¨texto[ultimo] !
+\ primero = primero + 1 !
+\ ultimo = ultimo - 1 !
+? 
+>> FF !
+¿ !
+@ !
 
 >> VV !
-.!
+. !

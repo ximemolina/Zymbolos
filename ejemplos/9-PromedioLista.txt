@@ -4,14 +4,14 @@
 
 ¿ len == 0 !
 >> res !
-¿!
+¿ !
 
 @ i < len !
-res = res + lista[i] !
-i = i + 1 !
-@!
+\ res = res + ¨lista[i] !
+\ i = i + 1 !
+@ !
 
-res = res / len !
+\ res = res / len !
 
 >> res !
-.!
+. !

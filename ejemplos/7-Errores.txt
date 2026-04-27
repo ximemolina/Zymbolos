@@ -1,3 +1,6 @@
+NOTA: estos errores están pendientes
+
+
 . MiFuncion !
 : precio NNN = 100 $ !
 ¿ precio > 50 !

@@ -1,21 +1,22 @@
 . MCD >> NNN << NNN a NNN b !
-
 : temp NNN = 0 !
 
 @ b != 0 !
-temp = b !
-b = a % b !
-a = temp !
-
-@!
+\ temp = b !
+\ b = a % b !
+\ a = temp !
+@ !
 
 >> a !
-.!
+. !
 
 . MCM >> NNN << NNN a NNN b !
+: mcd NNN = 0 !
+\ mcd = MCD a b !
 
-: mcd NNN = MCD a b !
+: calculo NNN = 0 !
+\ calculo = a * b !
+\ calculo = calculo / mcd !
 
->> ( a * b ) / mcd !
-
-.!
+>> calculo !
+. !

@@ -1,9 +1,8 @@
 . UnirTexto >> CCC << CCC a CCC b !
-
 : Res CCC = " " !
 
-Res = a + " " !
-Res = Res + b !
+\ Res = a + " " !
+\ Res = Res + b !
 
 >> Res !
-.!
+. !

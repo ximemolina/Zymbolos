@@ -15,8 +15,8 @@ class Asa:
 class Nodo:
     def __init__(self, tipo, valor=None, nodos=None):
         self.tipo = tipo  # es un enum TipoNodo
-        self.contenido = valor  # es un string opcional (para los nodos hoja)
-        self.nodos_hijos = nodos or []  # es una lista
+        self.valor = valor  # es un string opcional (para los nodos hoja)
+        self.nodos = nodos or []  # es una lista
 
 
 # Definir los tipos de nodos que produce el analizador (son las reglas de la gramática)
@@ -44,3 +44,14 @@ class TipoNodo(Enum):
     INDICE = "INDICE"
     ACCESOLISTA = "ACCESOLISTA"
     ASIGNACIONELEMENTOLISTA = "ASIGNACIONELEMENTOLISTA"
+
+    PROGRAMA = "PROGRAMA"
+    DECLARACIONFUNCION = "DECLARACIONFUNCION"
+    INCLUDE = "INCLUDE"
+    BLOQUE = "BLOQUE"
+    LLAMADAFUNCION = "LLAMADAFUNCION"
+    DECLARACIONVARIABLES = "DECLARACIONVARIABLES"
+    FUNCIONESPREDETERMINADAS = "FUNCIONESPREDETERMINADAS"
+    EXPRESIONESMATEMATICAS = "EXPRESIONESMATEMATICAS"
+    
+

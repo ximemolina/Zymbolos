@@ -77,13 +77,13 @@ if len(sys.argv) != 2:
 archivo = sys.argv[1]
 
 try:
-    print(f"🔍 Analizando archivo: {archivo}")
-    print("=" * 50)
     
     todos_los_tokens = []
+
+
+    print("EXPLORACION \n")
     
-   
-    print("Exploracion")
+
     with open(archivo, "r", encoding="utf-8") as file:
         for numero_linea, linea in enumerate(file, start=1):
             tokens_linea = lexer(linea, numero_linea)
@@ -95,7 +95,7 @@ try:
     
 
     if tokens_convertidos:
-        print("Analizador:")
+        print("ANALISI \n")
         
 
         analizador = Analizador(tokens_convertidos[1:], tokens_convertidos[0])

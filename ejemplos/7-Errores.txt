@@ -1,4 +1,4 @@
-NOTA: estos errores están pendientes
+_NOTA: estos errores están pendientes
 
 
 . MiFuncion !

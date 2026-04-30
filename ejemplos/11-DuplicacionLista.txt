@@ -1,4 +1,4 @@
-. ContarApariciones >> NNN << LLL lista NNN len CCC texto !
+. ContarApariciones >> OOO << LLL lista NNN len CCC texto NNN apariciones!
 : res NNN = 0 !
 : i NNN = 0 !
 
@@ -9,15 +9,17 @@
 \ i = i + 1 !
 @ !
 
->> res !
+\ apariciones = res !
 . !
 
 . HayDuplicados >> BBB << LLL lista NNN len !
 : i NNN = 0 !
 : res NNN = 0 !
+: temp CCC = "" !
 
 @ i < len !
-\ res = ContarApariciones lista len ¨lista[i] !
+\ temp = ¨lista[i] !
+ContarApariciones lista len temp res!
 
 ¿ res > 1 !
 >> VV !

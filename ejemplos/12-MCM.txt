@@ -1,4 +1,4 @@
-. MCD >> NNN << NNN a NNN b !
+. MCD >> OOO << NNN a NNN b NNN res!
 : temp NNN = 0 !
 
 @ b != 0 !
@@ -7,12 +7,12 @@
 \ a = temp !
 @ !
 
->> a !
+\ res = a !
 . !
 
 . MCM >> NNN << NNN a NNN b !
 : mcd NNN = 0 !
-\ mcd = MCD a b !
+MCD a b mcd!
 
 : calculo NNN = 0 !
 \ calculo = a * b !

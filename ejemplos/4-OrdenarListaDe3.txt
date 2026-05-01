@@ -1,21 +1,25 @@
 . OrdenarLista >> LLL << LLL L !
 : Temp NNN = 0 !
+: Temp2 NNN = 0 !
 
 ¿ ¨L[0] > ¨L[1] !
 \ Temp = ¨L[0] !
-¨L[0] = ¨L[1] !
+\ Temp2 = ¨L[1] !
+¨L[0] = Temp2 !
 ¨L[1] = Temp !
 ¿ !
 
 ¿ ¨L[1] > ¨L[2] !
 \ Temp = ¨L[1] !
-¨L[1] = ¨L[2] !
+\ Temp2 = ¨L[2] !
+¨L[1] = Temp2 !
 ¨L[2] = Temp !
 ¿ !
 
 ¿ ¨L[0] > ¨L[1] !
 \ Temp = ¨L[0] !
-¨L[0] = ¨L[1] !
+\ Temp2 = ¨L[1] !
+¨L[0] = Temp2 !
 ¨L[1] = Temp !
 ¿ !
 

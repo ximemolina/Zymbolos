@@ -1,13 +1,15 @@
 . Promedio >> NNN << LLL lista NNN len !
 : i NNN = 0 !
 : res NNN = 0 !
+: temp NNN = 0 !
 
 ¿ len == 0 !
 >> res !
 ¿ !
 
 @ i < len !
-\ res = res + ¨lista[i] !
+\ temp = ¨lista[i] !
+\ res = res + temp !
 \ i = i + 1 !
 @ !
 

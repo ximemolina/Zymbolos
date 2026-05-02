@@ -34,7 +34,6 @@ class Analizador:
         if self.token_actual is not None and self.token_actual.valor == "!":
             self.__avanzar()
 
-
     def __verificar(self, esperado):
         """
         Verifica que el componente actual sea el esperado.
@@ -42,7 +41,9 @@ class Analizador:
         Si no coincide, maneja el error y aplica modo pánico.
         """
         if self.token_actual is None:
-            self.__manejar_error(f"Se esperaba '{esperado}' pero llegó al final del archivo")
+            self.__manejar_error(
+                f"Se esperaba '{esperado}' pero llegó al final del archivo"
+            )
             return
         if self.token_actual.valor == esperado:
             self.__avanzar()

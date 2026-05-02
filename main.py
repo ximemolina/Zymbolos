@@ -34,22 +34,6 @@ def convertir_token_a_enum(token):
     return TokenConvertido(tipo_enum, token.valor, token.linea, token.columna)
 
 
-def mostrar_asa(nodo, nivel=0):
-
-    if nodo is None:
-        return
-
-    indent = "  " * nivel
-    if hasattr(nodo, "valor") and nodo.valor:
-        print(f"{indent}{nodo.tipo.value} -> {nodo.valor}")
-    else:
-        print(f"{indent}{nodo.tipo.value}")
-
-    if hasattr(nodo, "nodos") and nodo.nodos:
-        for hijo in nodo.nodos:
-            mostrar_asa(hijo, nivel + 1)
-
-
 if len(sys.argv) != 2:
     print("Uso: python main.py <archivo>")
     sys.exit(1)
@@ -70,7 +54,7 @@ try:
     tokens_convertidos = [convertir_token_a_enum(token) for token in todos_los_tokens]
 
     if tokens_convertidos:
-        print("\n \n \n ANALISI \n")
+        print("\n \n \n ANALISIS \n")
 
         analizador = Analizador(tokens_convertidos[1:], tokens_convertidos[0])
 
@@ -78,7 +62,7 @@ try:
 
         if analizador.asa.raiz:
 
-            mostrar_asa(analizador.asa.raiz)
+            analizador.asa.mostrar_asa(analizador.asa.raiz)
         else:
             print("Error en el análisis sintáctico")
     else:

@@ -10,17 +10,30 @@ class Asa:
     def __init__(self):
         self.raiz = None
 
+    def mostrar_asa(self, nodo, nivel=0):
+
+        if nodo is None:
+            return
+
+        indent = "  " * nivel
+
+        print(f"{indent}< {nodo.tipo.value}, {nodo.valor}, {nodo.atributos} > \n")
+
+        if hasattr(nodo, "nodos") and nodo.nodos:
+            for hijo in nodo.nodos:
+                self.mostrar_asa(hijo, nivel + 1)
+
 
 # Definir el nodo del árbol de análisis sintáctico abstracto (ASA)
 class Nodo:
-    def __init__(self, tipo, valor=None, nodos=None):
+    def __init__(self, tipo, valor=None, nodos=None, atributos=None):
         self.tipo = tipo  # es un enum TipoNodo
         self.valor = valor  # es un string opcional (para los nodos hoja)
         self.nodos = nodos or []  # es una lista
+        self.atributos = atributos or {}  # diccionario para línea, columna
 
 
 # Definir los tipos de nodos que produce el analizador (son las reglas de la gramática)
-"""!!!!!!me dio pereza agregar todas las reglas, vayan agregando las suyas :P  !!!!!!!!!!!!!!!!!!!!!!!!!!!!! """
 
 
 class TipoNodo(Enum):

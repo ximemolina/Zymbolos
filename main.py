@@ -34,7 +34,6 @@ def convertir_token_a_enum(token):
     return TokenConvertido(tipo_enum, token.valor, token.linea, token.columna)
 
 
-
 if len(sys.argv) != 2:
     print("Uso: python main.py <archivo>")
     sys.exit(1)

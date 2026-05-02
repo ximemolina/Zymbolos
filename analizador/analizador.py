@@ -51,9 +51,7 @@ class Analizador:
                 f"En línea {self.token_actual.linea}, columna {self.token_actual.columna}: se esperaba '{esperado}' pero se encontró '{self.token_actual.valor}'"
             )
 
-    
-
-    # acá inician los métodos de las reglas 
+    # acá inician los métodos de las reglas
 
     def __analizar_programa(self):
         """
@@ -65,19 +63,16 @@ class Analizador:
         while True:
 
             try:
-                
+
                 if self.token_actual is None:
                     break
 
-                
                 if self.token_actual.valor == "#":
                     nodos_nuevos += [self.__analizar_include()]
                 elif self.token_actual.valor == ".":
                     nodos_nuevos += [self.__analizar_declaracion_funcion()]
                 elif self.token_actual.tipo == TipoToken.IDENTIFICADOR:
-                    nodos_nuevos += [
-                        self.__analizar_llamada_funcion()
-                    ]  
+                    nodos_nuevos += [self.__analizar_llamada_funcion()]
                 elif self.token_actual.tipo == TipoToken.IO_OP:
                     nodos_nuevos += [self.__analizar_funciones_predeterminadas()]
                 else:
@@ -290,8 +285,6 @@ class Analizador:
         except Exception as e:
             self.__manejar_error(f"Error en expresiones matemáticas: {e}")
             return None
-
-
 
     def __analizar_condicionales(self):
         """Condicionales ::=  ¿(~)? Comparaciones ! Bloque  (¿”?” Comparaciones !  Bloque)* (“?” Bloque)? ¿!"""
@@ -625,9 +618,9 @@ class Analizador:
                 TipoNodo.COMPUERTA_LOGICA,
                 valor=self.token_actual.valor,
                 atributos={
-                    'linea': self.token_actual.linea,
-                    'columna': self.token_actual.columna
-                }
+                    "linea": self.token_actual.linea,
+                    "columna": self.token_actual.columna,
+                },
             )
             self.__avanzar()
             return nodo
@@ -642,9 +635,9 @@ class Analizador:
                 TipoNodo.SIMBOLO,
                 valor=self.token_actual.valor,
                 atributos={
-                    'linea': self.token_actual.linea,
-                    'columna': self.token_actual.columna
-                }
+                    "linea": self.token_actual.linea,
+                    "columna": self.token_actual.columna,
+                },
             )
             self.__avanzar()
             return nodo
@@ -659,9 +652,9 @@ class Analizador:
                 TipoNodo.CADENA,
                 valor=self.token_actual.valor,
                 atributos={
-                    'linea': self.token_actual.linea,
-                    'columna': self.token_actual.columna
-                }
+                    "linea": self.token_actual.linea,
+                    "columna": self.token_actual.columna,
+                },
             )
             self.__avanzar()
             return nodo
@@ -676,9 +669,9 @@ class Analizador:
                 TipoNodo.FRASE,
                 valor=self.token_actual.valor,
                 atributos={
-                    'linea': self.token_actual.linea,
-                    'columna': self.token_actual.columna
-                }
+                    "linea": self.token_actual.linea,
+                    "columna": self.token_actual.columna,
+                },
             )
             self.__avanzar()
             return nodo
@@ -693,9 +686,9 @@ class Analizador:
                 TipoNodo.BOOL,
                 valor=self.token_actual.valor,
                 atributos={
-                    'linea': self.token_actual.linea,
-                    'columna': self.token_actual.columna
-                }
+                    "linea": self.token_actual.linea,
+                    "columna": self.token_actual.columna,
+                },
             )
             self.__avanzar()
             return nodo
@@ -710,9 +703,9 @@ class Analizador:
                 TipoNodo.NUMERO,
                 valor=self.token_actual.valor,
                 atributos={
-                    'linea': self.token_actual.linea,
-                    'columna': self.token_actual.columna
-                }
+                    "linea": self.token_actual.linea,
+                    "columna": self.token_actual.columna,
+                },
             )
             self.__avanzar()
             return nodo
@@ -727,9 +720,9 @@ class Analizador:
                 TipoNodo.COMPARATIVO,
                 valor=self.token_actual.valor,
                 atributos={
-                    'linea': self.token_actual.linea,
-                    'columna': self.token_actual.columna
-                }
+                    "linea": self.token_actual.linea,
+                    "columna": self.token_actual.columna,
+                },
             )
             self.__avanzar()
             return nodo
@@ -744,9 +737,9 @@ class Analizador:
                 TipoNodo.TIPO,
                 valor=self.token_actual.valor,
                 atributos={
-                    'linea': self.token_actual.linea,
-                    'columna': self.token_actual.columna
-                }
+                    "linea": self.token_actual.linea,
+                    "columna": self.token_actual.columna,
+                },
             )
             self.__avanzar()
             return nodo

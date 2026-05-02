@@ -16,9 +16,8 @@ class Asa:
             return
 
         indent = "  " * nivel
-        
-        print(f"{indent}< {nodo.tipo.value}, {nodo.valor}, {nodo.atributos} > \n")
 
+        print(f"{indent}< {nodo.tipo.value}, {nodo.valor}, {nodo.atributos} > \n")
 
         if hasattr(nodo, "nodos") and nodo.nodos:
             for hijo in nodo.nodos:

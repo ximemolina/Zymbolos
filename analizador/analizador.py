@@ -17,7 +17,6 @@ class Analizador:
         self.asa.raiz = self.__analizar_programa()
 
     def __avanzar(self):
-        """#!!!!!!!!!creo q esto sirve (se podrá probar hasta terminar todos los módulos)!!!!!!!"""
         if self.lista_componentes:
             self.token_actual = self.lista_componentes.pop(0)
         else:
@@ -52,10 +51,12 @@ class Analizador:
                 f"En línea {self.token_actual.linea}, columna {self.token_actual.columna}: se esperaba '{esperado}' pero se encontró '{self.token_actual.valor}'"
             )
 
-    #! ------------Las declaré para que no me dé algo raro cuando llame a una función que no existe--------------------------------
+    
+
+    # acá inician los métodos de las reglas 
 
     def __analizar_programa(self):
-        """#!!!!!!!!!creo q esto sirve (se podrá probar hasta terminar todos los módulos)!!!!!!!
+        """
         Programa ::= ( Include | Funcion | LlamadaFuncion | Comentarios )*
         """
 
@@ -64,11 +65,11 @@ class Analizador:
         while True:
 
             try:
-                # Verificar si hay más tokens
+                
                 if self.token_actual is None:
                     break
 
-                """Includes"""
+                
                 if self.token_actual.valor == "#":
                     nodos_nuevos += [self.__analizar_include()]
                 elif self.token_actual.valor == ".":
@@ -76,7 +77,7 @@ class Analizador:
                 elif self.token_actual.tipo == TipoToken.IDENTIFICADOR:
                     nodos_nuevos += [
                         self.__analizar_llamada_funcion()
-                    ]  # no hay que poner los comentarios o si? pq igual como el exploraor los ignora según yp
+                    ]  
                 elif self.token_actual.tipo == TipoToken.IO_OP:
                     nodos_nuevos += [self.__analizar_funciones_predeterminadas()]
                 else:
@@ -174,8 +175,8 @@ class Analizador:
                 if self.token_actual is None:
                     break
 
-                # Ok, es que en un bloque o cosas que abren y cierren como bucles o condicionales el token de cierre es el que define que debe haber para ver cual termina por las anidaciones y eso
-                # entonces hay que hacer estas cosas raras, en este caso ver que venga un ! dsp
+                # en un bloque o cosas que abren y cierran como bucles o condicionales el token de cierre es el que define que debe haber para ver cual termina por las anidaciones y eso
+                # entonces en este caso hay que ver que venga un ! depsués
                 if token_cierre and self.token_actual.valor == token_cierre:
                     next_token = (
                         self.lista_componentes[0] if self.lista_componentes else None
@@ -184,7 +185,7 @@ class Analizador:
                         break
                     if next_token.valor == "!":
                         break
-                    # si no es un ! es pq no era de cierrre y mas bien abre uno anidado
+                    # si no es un ! es porque no era de cierrre y mas bien abre uno anidado
                 elif self.token_actual.valor == "@":
                     nodos_nuevos += [self.__analizar_bucles()]
                 elif self.token_actual.valor == "¿":
@@ -207,7 +208,7 @@ class Analizador:
         return Nodo(TipoNodo.BLOQUE, nodos=nodos_nuevos)
 
     def __analizar_declaracion_variables(self):
-        """DeclaraciónVariables ::=  : Frase Tipo = (Termino | Bool | Lista | ExpresionesMatematicas)!   EXPERIMENTO"""
+        """DeclaraciónVariables ::=  : Frase Tipo = (Termino | Bool | Lista | ExpresionesMatematicas)!"""
 
         nodos_nuevos = []
 
@@ -290,7 +291,7 @@ class Analizador:
             self.__manejar_error(f"Error en expresiones matemáticas: {e}")
             return None
 
-    #! --------------------------------------------
+
 
     def __analizar_condicionales(self):
         """Condicionales ::=  ¿(~)? Comparaciones ! Bloque  (¿”?” Comparaciones !  Bloque)* (“?” Bloque)? ¿!"""
@@ -545,7 +546,7 @@ class Analizador:
             return None
 
     def __analizar_valor(self):
-        """Valor ::=  Bool | ExpresionesMatematicas | AccesoLista.        Experimento"""
+        """Valor ::=  Bool | ExpresionesMatematicas | AccesoLista"""
 
         nodos_nuevos = []
 
@@ -620,7 +621,14 @@ class Analizador:
 
     def __analizar_compuerta_logica(self):
         if self.token_actual.tipo == TipoToken.LOGIC_OP:
-            nodo = Nodo(TipoNodo.COMPUERTA_LOGICA, valor=self.token_actual.valor)
+            nodo = Nodo(
+                TipoNodo.COMPUERTA_LOGICA,
+                valor=self.token_actual.valor,
+                atributos={
+                    'linea': self.token_actual.linea,
+                    'columna': self.token_actual.columna
+                }
+            )
             self.__avanzar()
             return nodo
         else:
@@ -630,7 +638,14 @@ class Analizador:
 
     def __analizar_simbolo(self):
         if self.token_actual.tipo == TipoToken.ARITH_OP:
-            nodo = Nodo(TipoNodo.SIMBOLO, valor=self.token_actual.valor)
+            nodo = Nodo(
+                TipoNodo.SIMBOLO,
+                valor=self.token_actual.valor,
+                atributos={
+                    'linea': self.token_actual.linea,
+                    'columna': self.token_actual.columna
+                }
+            )
             self.__avanzar()
             return nodo
         else:
@@ -640,7 +655,14 @@ class Analizador:
 
     def __analizar_cadena(self):
         if self.token_actual.tipo == TipoToken.STRING:
-            nodo = Nodo(TipoNodo.CADENA, valor=self.token_actual.valor)
+            nodo = Nodo(
+                TipoNodo.CADENA,
+                valor=self.token_actual.valor,
+                atributos={
+                    'linea': self.token_actual.linea,
+                    'columna': self.token_actual.columna
+                }
+            )
             self.__avanzar()
             return nodo
         else:
@@ -650,7 +672,14 @@ class Analizador:
 
     def __analizar_frase(self):
         if self.token_actual.tipo == TipoToken.IDENTIFICADOR:
-            nodo = Nodo(TipoNodo.FRASE, valor=self.token_actual.valor)
+            nodo = Nodo(
+                TipoNodo.FRASE,
+                valor=self.token_actual.valor,
+                atributos={
+                    'linea': self.token_actual.linea,
+                    'columna': self.token_actual.columna
+                }
+            )
             self.__avanzar()
             return nodo
         else:
@@ -660,7 +689,14 @@ class Analizador:
 
     def __analizar_bool(self):
         if self.token_actual.tipo == TipoToken.BOOL:
-            nodo = Nodo(TipoNodo.BOOL, valor=self.token_actual.valor)
+            nodo = Nodo(
+                TipoNodo.BOOL,
+                valor=self.token_actual.valor,
+                atributos={
+                    'linea': self.token_actual.linea,
+                    'columna': self.token_actual.columna
+                }
+            )
             self.__avanzar()
             return nodo
         else:
@@ -670,7 +706,14 @@ class Analizador:
 
     def __analizar_numero(self):
         if self.token_actual.tipo == TipoToken.NUMERO:
-            nodo = Nodo(TipoNodo.NUMERO, valor=self.token_actual.valor)
+            nodo = Nodo(
+                TipoNodo.NUMERO,
+                valor=self.token_actual.valor,
+                atributos={
+                    'linea': self.token_actual.linea,
+                    'columna': self.token_actual.columna
+                }
+            )
             self.__avanzar()
             return nodo
         else:
@@ -680,7 +723,14 @@ class Analizador:
 
     def __analizar_comparativo(self):
         if self.token_actual.tipo == TipoToken.REL_OP:
-            nodo = Nodo(TipoNodo.COMPARATIVO, valor=self.token_actual.valor)
+            nodo = Nodo(
+                TipoNodo.COMPARATIVO,
+                valor=self.token_actual.valor,
+                atributos={
+                    'linea': self.token_actual.linea,
+                    'columna': self.token_actual.columna
+                }
+            )
             self.__avanzar()
             return nodo
         else:
@@ -690,7 +740,14 @@ class Analizador:
 
     def __analizar_tipo(self):
         if self.token_actual.tipo == TipoToken.TIPO:
-            nodo = Nodo(TipoNodo.TIPO, valor=self.token_actual.valor)
+            nodo = Nodo(
+                TipoNodo.TIPO,
+                valor=self.token_actual.valor,
+                atributos={
+                    'linea': self.token_actual.linea,
+                    'columna': self.token_actual.columna
+                }
+            )
             self.__avanzar()
             return nodo
         else:

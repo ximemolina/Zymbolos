@@ -70,7 +70,7 @@ try:
     tokens_convertidos = [convertir_token_a_enum(token) for token in todos_los_tokens]
 
     if tokens_convertidos:
-        print("ANALISI \n")
+        print("\n \n \n ANALISI \n")
 
         analizador = Analizador(tokens_convertidos[1:], tokens_convertidos[0])
 

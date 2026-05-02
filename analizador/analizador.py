@@ -23,25 +23,32 @@ class Analizador:
         else:
             self.token_actual = None
 
+    def __manejar_error(self, mensaje):
+        """
+        Usamos el modo pánico
+        nuestro simbolo terminal es !
+        """
+        print(f"ERROR SINTACTICO: {mensaje} \n ")
+        while self.token_actual is not None and self.token_actual.valor != "!":
+            self.__avanzar()
+        if self.token_actual is not None and self.token_actual.valor == "!":
+            self.__avanzar()
+
+
     def __verificar(self, esperado):
         """
         Verifica que el componente actual sea el esperado.
         Si coincide, avanza al siguiente token.
-        Si no coincide, lanza un error de sintaxis.
+        Si no coincide, maneja el error y aplica modo pánico.
         """
         if self.token_actual is None:
-            raise SyntaxError(
-                f"Se esperaba '{esperado}' pero llegó al final del archivo"
-            )
-
+            self.__manejar_error(f"Se esperaba '{esperado}' pero llegó al final del archivo")
+            return
         if self.token_actual.valor == esperado:
-            # Avanzar al siguiente token
             self.__avanzar()
         else:
-            raise SyntaxError(
-                f"""Error de sintaxis en linea '{self.token_actual.linea}', 
-                columna '{self.token_actual.columna}': se esperaba '{esperado}' 
-                pero se encontró '{self.token_actual.valor}'"""
+            self.__manejar_error(
+                f"En línea {self.token_actual.linea}, columna {self.token_actual.columna}: se esperaba '{esperado}' pero se encontró '{self.token_actual.valor}'"
             )
 
     #! ------------Las declaré para que no me dé algo raro cuando llame a una función que no existe--------------------------------
@@ -73,8 +80,8 @@ class Analizador:
                     nodos_nuevos += [self.__analizar_funciones_predeterminadas()]
                 else:
                     break
-            except SyntaxError as e:
-                print(f"Error de sintaxis en programa: {e}")
+            except Exception as e:
+                self.__manejar_error(f"Error en programa: {e}")
                 return None
         return Nodo(TipoNodo.PROGRAMA, nodos=nodos_nuevos)
 
@@ -92,12 +99,8 @@ class Analizador:
 
             return Nodo(TipoNodo.INCLUDE, nodos=nodos_nuevos)
 
-        except SyntaxError as e:
-            print(f"Error de sintaxis en include: {e}")
-            return None
-
         except Exception as e:
-            print(f"Error inesperado en include: {e}")
+            self.__manejar_error(f"Error en include: {e}")
             return None
 
     def __analizar_declaracion_funcion(self):
@@ -131,12 +134,8 @@ class Analizador:
 
             return Nodo(TipoNodo.DECLARACIONFUNCION, nodos=nodos_nuevos)
 
-        except SyntaxError as e:
-            print(f"Error de sintaxis en declaración de función: {e}")
-            return None
-
         except Exception as e:
-            print(f"Error inesperado en declaración de función: {e}")
+            self.__manejar_error(f"Error en declaración de función: {e}")
             return None
 
     def __analizar_llamada_funcion(self):
@@ -158,12 +157,8 @@ class Analizador:
 
             return Nodo(TipoNodo.LLAMADAFUNCION, nodos=nodos_nuevos)
 
-        except SyntaxError as e:
-            print(f"Error de sintaxis en llamada de función: {e}")
-            return None
-
         except Exception as e:
-            print(f"Error inesperado en llamada de función: {e}")
+            self.__manejar_error(f"Error en llamada de función: {e}")
             return None
 
     def __analizar_bloque(self, token_cierre=None):
@@ -205,8 +200,8 @@ class Analizador:
                     nodos_nuevos += [self.__analizar_asignacion_elemento_lista()]
                 else:
                     break
-            except SyntaxError as e:
-                print(f"Error de sintaxis en bloque: {e}")
+            except Exception as e:
+                self.__manejar_error(f"Error en bloque: {e}")
                 return None
         return Nodo(TipoNodo.BLOQUE, nodos=nodos_nuevos)
 
@@ -234,12 +229,8 @@ class Analizador:
             self.__verificar("!")
             return Nodo(TipoNodo.DECLARACIONVARIABLES, nodos=nodos_nuevos)
 
-        except SyntaxError as e:
-            print(f"Error de sintaxis en declaración de variables: {e}")
-            return None
-
         except Exception as e:
-            print(f"Error inesperado en declaración de variables: {e}")
+            self.__manejar_error(f"Error en declaración de variables: {e}")
             return None
 
     def __analizar_funciones_predeterminadas(self):
@@ -276,8 +267,8 @@ class Analizador:
                 TipoNodo.FUNCIONESPREDETERMINADAS, valor=funcion, nodos=nodos_nuevos
             )
 
-        except SyntaxError as e:
-            print(f"Error de sintaxis en función predeterminada: {e}")
+        except Exception as e:
+            self.__manejar_error(f"Error en función predeterminada: {e}")
             return None
 
     def __analizar_expresiones_matematicas(self):
@@ -294,12 +285,8 @@ class Analizador:
 
             return Nodo(TipoNodo.EXPRESIONESMATEMATICAS, nodos=nodos_nuevos)
 
-        except SyntaxError as e:
-            print(f"Error de sintaxis en expresiones matemáticas: {e}")
-            return None
-
         except Exception as e:
-            print(f"Error inesperado en expresiones matemáticas: {e}")
+            self.__manejar_error(f"Error en expresiones matemáticas: {e}")
             return None
 
     #! --------------------------------------------
@@ -352,12 +339,8 @@ class Analizador:
 
             return Nodo(TipoNodo.CONDICIONALES, nodos=nodos_nuevos)
 
-        except SyntaxError as e:
-            print(f"Error de sintaxis en condicional: {e}")
-            return None
-
         except Exception as e:
-            print(f"Error inesperado en condicional: {e}")
+            self.__manejar_error(f"Error en condicional: {e}")
             return None
 
     def __analizar_bucles(self):
@@ -389,12 +372,8 @@ class Analizador:
 
             return Nodo(TipoNodo.BUCLES, nodos=nodos_nuevos)
 
-        except SyntaxError as e:
-            print(f"Error de sintaxis en bucle: {e}")
-            return None
-
         except Exception as e:
-            print(f"Error inesperado en bucle: {e}")
+            self.__manejar_error(f"Error en bucle: {e}")
             return None
 
     def __analizar_asignacion(self):
@@ -438,12 +417,8 @@ class Analizador:
 
             return Nodo(TipoNodo.ASIGNACION, nodos=nodos_nuevos)
 
-        except SyntaxError as e:
-            print(f"Error de asignación: {e}")
-            return None
-
         except Exception as e:
-            print(f"Error inesperado de asignación: {e}")
+            self.__manejar_error(f"Error en asignación: {e}")
             return None
 
     def __analizar_asignacion_elemento_lista(self):
@@ -466,12 +441,8 @@ class Analizador:
 
             return Nodo(TipoNodo.ASIGNACIONELEMENTOLISTA, nodos=nodos_nuevos)
 
-        except SyntaxError as e:
-            print(f"Error de sintaxis en la asignación en lista: {e}")
-            return None
-
         except Exception as e:
-            print(f"Error inesperado en asignación en lista: {e}")
+            self.__manejar_error(f"Error en asignación en lista: {e}")
             return None
 
     def __analizar_comparaciones(self):
@@ -490,12 +461,8 @@ class Analizador:
 
             return Nodo(TipoNodo.COMPARACIONES, nodos=nodos_nuevos)
 
-        except SyntaxError as e:
-            print(f"Error en comparaciones: {e}")
-            return None
-
         except Exception as e:
-            print(f"Error inesperado en comparaciones: {e}")
+            self.__manejar_error(f"Error en comparaciones: {e}")
             return None
 
     def __analizar_comparacion(self):
@@ -514,12 +481,8 @@ class Analizador:
 
             return Nodo(TipoNodo.COMPARACION, nodos=nodos_nuevos)
 
-        except SyntaxError as e:
-            print(f"Error en comparación: {e}")
-            return None
-
         except Exception as e:
-            print(f"Error inesperado en comparación: {e}")
+            self.__manejar_error(f"Error en comparación: {e}")
             return None
 
     def __analizar_lista(self):
@@ -549,12 +512,8 @@ class Analizador:
 
             return Nodo(TipoNodo.LISTA, nodos=nodos_nuevos)
 
-        except SyntaxError as e:
-            print(f"Error de sintaxis en lista: {e}")
-            return None
-
         except Exception as e:
-            print(f"Error inesperado en lista: {e}")
+            self.__manejar_error(f"Error en lista: {e}")
             return None
 
     def __analizar_acceso_lista(self):
@@ -580,12 +539,8 @@ class Analizador:
 
             return Nodo(TipoNodo.ACCESOLISTA, nodos=nodos_nuevos)
 
-        except SyntaxError as e:
-            print(f"Error de sintaxis en el acceso de lista: {e}")
-            return None
-
         except Exception as e:
-            print(f"Error inesperado en el acceso de lista: {e}")
+            self.__manejar_error(f"Error en el acceso de lista: {e}")
             return None
 
     def __analizar_valor(self):
@@ -619,12 +574,8 @@ class Analizador:
 
             return Nodo(TipoNodo.VALOR, nodos=nodos_nuevos)
 
-        except SyntaxError as e:
-            print(f"Error de valor: {e}")
-            return None
-
         except Exception as e:
-            print(f"Error inesperado de valor: {e}")
+            self.__manejar_error(f"Error de valor: {e}")
             return None
 
     def __analizar_indice(self):
@@ -644,12 +595,8 @@ class Analizador:
 
             return Nodo(TipoNodo.INDICE, nodos=nodos_nuevos)
 
-        except SyntaxError as e:
-            print(f"Error de índice: {e}")
-            return None
-
         except Exception as e:
-            print(f"Error inesperado de índice: {e}")
+            self.__manejar_error(f"Error de índice: {e}")
             return None
 
     def __analizar_termino(self):

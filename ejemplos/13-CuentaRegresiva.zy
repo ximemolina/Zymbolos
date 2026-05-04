@@ -1,0 +1,10 @@
+. CuentaRegresiva >> NNN << NNN inicio !
+: actual NNN = inicio !
+
+@ actual >= 0 !
+>> actual !
+\ actual = actual - 1 !
+@ !
+
+>> actual !
+. !

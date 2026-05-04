@@ -1,0 +1,13 @@
+. SumaDigitos >> NNN << NNN num !
+: suma NNN = 0 !
+: digito NNN = 0 !
+: aux NNN = num !
+
+@ aux >= 1 !
+\ digito = aux % 10 !
+\ suma = suma + digito !
+\ aux = aux / 10 !
+@ !
+
+>> suma !
+. !

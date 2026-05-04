@@ -1,0 +1,15 @@
+. Fibonacci >> NNN << NNN n !
+: a NNN = 0 !
+: b NNN = 1 !
+: temp NNN = 0 !
+: i NNN = 0 !
+
+@ i <= n !
+>> a !
+\ temp = a + b !
+\ a = b !
+\ b = temp !
+\ i = i + 1 !
+@ !
+
+. !

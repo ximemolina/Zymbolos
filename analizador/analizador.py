@@ -25,7 +25,7 @@ class Analizador:
     def __manejar_error(self, mensaje):
         """
         Usamos el modo pánico
-        nuestro simbolo terminal es !
+        nuestro componente de sincronizacion es !
         """
         print(f"ERROR SINTACTICO: {mensaje} \n ")
         while self.token_actual is not None and self.token_actual.valor != "!":

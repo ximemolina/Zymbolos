@@ -59,6 +59,11 @@ class Analizador:
         """
 
         nodos_nuevos = []
+       
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         while True:
 
@@ -80,12 +85,17 @@ class Analizador:
             except Exception as e:
                 self.__manejar_error(f"Error en programa: {e}")
                 return None
-        return Nodo(TipoNodo.PROGRAMA, nodos=nodos_nuevos)
+        return Nodo(TipoNodo.PROGRAMA, nodos=nodos_nuevos, atributos=atributos)
 
     def __analizar_include(self):
         """Include ::= "#" Frase "!" """
 
         nodos_nuevos = []
+        
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         try:
             self.__verificar("#")
@@ -94,7 +104,7 @@ class Analizador:
 
             self.__verificar("!")
 
-            return Nodo(TipoNodo.INCLUDE, nodos=nodos_nuevos)
+            return Nodo(TipoNodo.INCLUDE, nodos=nodos_nuevos, atributos=atributos)
 
         except Exception as e:
             self.__manejar_error(f"Error en include: {e}")
@@ -104,6 +114,11 @@ class Analizador:
         """DeclaraciónFunción ::= “.” Frase >> Tipo? << (Tipo Frase)*! Bloque “.” !"""
 
         nodos_nuevos = []
+        
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         try:
             self.__verificar(".")
@@ -129,7 +144,7 @@ class Analizador:
             self.__verificar(".")
             self.__verificar("!")
 
-            return Nodo(TipoNodo.DECLARACIONFUNCION, nodos=nodos_nuevos)
+            return Nodo(TipoNodo.DECLARACIONFUNCION, nodos=nodos_nuevos, atributos=atributos)
 
         except Exception as e:
             self.__manejar_error(f"Error en declaración de función: {e}")
@@ -139,6 +154,11 @@ class Analizador:
         """LlamadaFuncion ::=  Frase Término* !"""
 
         nodos_nuevos = []
+       
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         try:
             nodos_nuevos += [self.__analizar_frase()]
@@ -152,7 +172,7 @@ class Analizador:
 
             self.__verificar("!")
 
-            return Nodo(TipoNodo.LLAMADAFUNCION, nodos=nodos_nuevos)
+            return Nodo(TipoNodo.LLAMADAFUNCION, nodos=nodos_nuevos, atributos=atributos)
 
         except Exception as e:
             self.__manejar_error(f"Error en llamada de función: {e}")
@@ -164,6 +184,11 @@ class Analizador:
         """
 
         nodos_nuevos = []
+        
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         while True:
             try:
@@ -200,12 +225,17 @@ class Analizador:
             except Exception as e:
                 self.__manejar_error(f"Error en bloque: {e}")
                 return None
-        return Nodo(TipoNodo.BLOQUE, nodos=nodos_nuevos)
+        return Nodo(TipoNodo.BLOQUE, nodos=nodos_nuevos, atributos=atributos)
 
     def __analizar_declaracion_variables(self):
         """DeclaraciónVariables ::=  : Frase Tipo = (Termino | Bool | Lista | ExpresionesMatematicas)!"""
 
         nodos_nuevos = []
+      
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         try:
             self.__verificar(":")
@@ -224,7 +254,7 @@ class Analizador:
                 nodos_nuevos += [self.__analizar_expresiones_matematicas()]
 
             self.__verificar("!")
-            return Nodo(TipoNodo.DECLARACIONVARIABLES, nodos=nodos_nuevos)
+            return Nodo(TipoNodo.DECLARACIONVARIABLES, nodos=nodos_nuevos, atributos=atributos)
 
         except Exception as e:
             self.__manejar_error(f"Error en declaración de variables: {e}")
@@ -233,6 +263,11 @@ class Analizador:
     def __analizar_funciones_predeterminadas(self):
         """FuncionesPredeterminadas ::=  (<<< | >>> | >>| <<) (Termino | Tipo | Lista | Bool) + !"""
         nodos_nuevos = []
+       
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
         try:
             if self.token_actual.tipo == TipoToken.IO_OP:
                 funcion = self.token_actual.valor
@@ -261,7 +296,7 @@ class Analizador:
             self.__verificar("!")
 
             return Nodo(
-                TipoNodo.FUNCIONESPREDETERMINADAS, valor=funcion, nodos=nodos_nuevos
+                TipoNodo.FUNCIONESPREDETERMINADAS, valor=funcion, nodos=nodos_nuevos, atributos=atributos
             )
 
         except Exception as e:
@@ -272,6 +307,11 @@ class Analizador:
         """ExpresionesMatematicas ::=  Termino (Simbolo Termino)*"""
 
         nodos_nuevos = []
+        
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         try:
             nodos_nuevos += [self.__analizar_termino()]
@@ -280,7 +320,7 @@ class Analizador:
                 nodos_nuevos += [self.__analizar_simbolo()]
                 nodos_nuevos += [self.__analizar_termino()]
 
-            return Nodo(TipoNodo.EXPRESIONESMATEMATICAS, nodos=nodos_nuevos)
+            return Nodo(TipoNodo.EXPRESIONESMATEMATICAS, nodos=nodos_nuevos, atributos=atributos)
 
         except Exception as e:
             self.__manejar_error(f"Error en expresiones matemáticas: {e}")
@@ -290,6 +330,11 @@ class Analizador:
         """Condicionales ::=  ¿(~)? Comparaciones ! Bloque  (¿”?” Comparaciones !  Bloque)* (“?” Bloque)? ¿!"""
 
         nodos_nuevos = []
+        
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         try:
             # Verificar apertura del condicional
@@ -313,7 +358,7 @@ class Analizador:
                     # Para validar que no es un cierre de condicional
                     if self.token_actual.valor == "!":
                         self.__verificar("!")
-                        return Nodo(TipoNodo.CONDICIONALES, nodos=nodos_nuevos)
+                        return Nodo(TipoNodo.CONDICIONALES, nodos=nodos_nuevos, atributos=atributos)
                     elif self.token_actual.valor == "?":
                         self.__verificar("?")
                         nodos_nuevos += [self.__analizar_comparaciones()]
@@ -332,7 +377,7 @@ class Analizador:
             self.__verificar("¿")
             self.__verificar("!")
 
-            return Nodo(TipoNodo.CONDICIONALES, nodos=nodos_nuevos)
+            return Nodo(TipoNodo.CONDICIONALES, nodos=nodos_nuevos, atributos=atributos)
 
         except Exception as e:
             self.__manejar_error(f"Error en condicional: {e}")
@@ -342,6 +387,11 @@ class Analizador:
         """Bucles ::= “@” Comparaciones ! Bloque “@”  “!”"""
 
         nodos_nuevos = []
+        
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         try:
 
@@ -365,7 +415,7 @@ class Analizador:
             self.__verificar("@")
             self.__verificar("!")
 
-            return Nodo(TipoNodo.BUCLES, nodos=nodos_nuevos)
+            return Nodo(TipoNodo.BUCLES, nodos=nodos_nuevos, atributos=atributos)
 
         except Exception as e:
             self.__manejar_error(f"Error en bucle: {e}")
@@ -375,6 +425,11 @@ class Analizador:
         """Asignacion ::= “\” Frase "=" (Bool | ExpresionesMatematicas | Lista | AccesoLista) "!" """
 
         nodos_nuevos = []
+        
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         try:
             # Verificar componente de apertura
@@ -410,7 +465,7 @@ class Analizador:
             # Verificar cierre de bloque
             self.__verificar("!")
 
-            return Nodo(TipoNodo.ASIGNACION, nodos=nodos_nuevos)
+            return Nodo(TipoNodo.ASIGNACION, nodos=nodos_nuevos, atributos=atributos)
 
         except Exception as e:
             self.__manejar_error(f"Error en asignación: {e}")
@@ -420,6 +475,11 @@ class Analizador:
         """AsignacionElementoLista ::= AccesoLista "=" Termino "!"""
 
         nodos_nuevos = []
+        
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         try:
             # Verificar acceso a lista
@@ -434,7 +494,7 @@ class Analizador:
             # Verificar cierre de asignación
             self.__verificar("!")
 
-            return Nodo(TipoNodo.ASIGNACIONELEMENTOLISTA, nodos=nodos_nuevos)
+            return Nodo(TipoNodo.ASIGNACIONELEMENTOLISTA, nodos=nodos_nuevos, atributos=atributos)
 
         except Exception as e:
             self.__manejar_error(f"Error en asignación en lista: {e}")
@@ -444,6 +504,11 @@ class Analizador:
         """Comparaciones ::=  Comparacion (CompuertasLogicas Comparacion)*"""
 
         nodos_nuevos = []
+        
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         try:
             # Verificar primera Comparacion
@@ -454,7 +519,7 @@ class Analizador:
                 nodos_nuevos += [self.__analizar_compuerta_logica()]
                 nodos_nuevos += [self.__analizar_comparacion()]
 
-            return Nodo(TipoNodo.COMPARACIONES, nodos=nodos_nuevos)
+            return Nodo(TipoNodo.COMPARACIONES, nodos=nodos_nuevos, atributos=atributos)
 
         except Exception as e:
             self.__manejar_error(f"Error en comparaciones: {e}")
@@ -464,6 +529,11 @@ class Analizador:
         """Comparacion ::=  Valor (Comparativos Valor)*"""
 
         nodos_nuevos = []
+       
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         try:
             # Verificar Valor
@@ -474,7 +544,7 @@ class Analizador:
                 nodos_nuevos += [self.__analizar_comparativo()]
                 nodos_nuevos += [self.__analizar_valor()]
 
-            return Nodo(TipoNodo.COMPARACION, nodos=nodos_nuevos)
+            return Nodo(TipoNodo.COMPARACION, nodos=nodos_nuevos, atributos=atributos)
 
         except Exception as e:
             self.__manejar_error(f"Error en comparación: {e}")
@@ -484,6 +554,11 @@ class Analizador:
         """Lista::=  "{" (Termino ("," Termino)*)? "}" """
 
         nodos_nuevos = []
+       
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         try:
             # Verificar apertura de la lista
@@ -505,7 +580,7 @@ class Analizador:
             # Verificar cierre de la lista
             self.__verificar("}")
 
-            return Nodo(TipoNodo.LISTA, nodos=nodos_nuevos)
+            return Nodo(TipoNodo.LISTA, nodos=nodos_nuevos, atributos=atributos)
 
         except Exception as e:
             self.__manejar_error(f"Error en lista: {e}")
@@ -515,6 +590,11 @@ class Analizador:
         """AccesoLista ::= “¨” Frase “[" Indice “]”"""
 
         nodos_nuevos = []
+        
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         try:
             # Verificar apertura del acceso de lista
@@ -532,7 +612,7 @@ class Analizador:
             # Verificar componente de cierre obligatoria
             self.__verificar("]")
 
-            return Nodo(TipoNodo.ACCESOLISTA, nodos=nodos_nuevos)
+            return Nodo(TipoNodo.ACCESOLISTA, nodos=nodos_nuevos, atributos=atributos)
 
         except Exception as e:
             self.__manejar_error(f"Error en el acceso de lista: {e}")
@@ -542,6 +622,11 @@ class Analizador:
         """Valor ::=  Bool | ExpresionesMatematicas | AccesoLista"""
 
         nodos_nuevos = []
+       
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         try:
 
@@ -567,7 +652,7 @@ class Analizador:
                     columna {self.token_actual.columna}"""
                 )
 
-            return Nodo(TipoNodo.VALOR, nodos=nodos_nuevos)
+            return Nodo(TipoNodo.VALOR, nodos=nodos_nuevos, atributos=atributos)
 
         except Exception as e:
             self.__manejar_error(f"Error de valor: {e}")
@@ -577,6 +662,11 @@ class Analizador:
         """Indice ::= Indice ::= Numero | Frase"""
 
         nodos_nuevos = []
+       
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         try:
             if self.token_actual.tipo == TipoToken.NUMERO:
@@ -588,7 +678,7 @@ class Analizador:
                     f"ERROR: se esperaba un número o frase como índice en línea {self.token_actual.linea}, columna {self.token_actual.columna}"
                 )
 
-            return Nodo(TipoNodo.INDICE, nodos=nodos_nuevos)
+            return Nodo(TipoNodo.INDICE, nodos=nodos_nuevos, atributos=atributos)
 
         except Exception as e:
             self.__manejar_error(f"Error de índice: {e}")
@@ -598,6 +688,11 @@ class Analizador:
         """Termino ::= Numero | Frase | Cadena"""
 
         nodos_nuevos = []
+        
+        if self.token_actual is not None:
+            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+        else:
+            atributos = {}
 
         if self.token_actual.tipo == TipoToken.NUMERO:
             nodos_nuevos += [self.__analizar_numero()]
@@ -610,7 +705,7 @@ class Analizador:
                 f"ERROR: se esperaba una cadena, número o frase en línea {self.token_actual.linea}, columna {self.token_actual.columna}"
             )
 
-        return Nodo(TipoNodo.TERMINO, nodos=nodos_nuevos)
+        return Nodo(TipoNodo.TERMINO, nodos=nodos_nuevos, atributos=atributos)
 
     def __analizar_compuerta_logica(self):
         if self.token_actual.tipo == TipoToken.LOGIC_OP:

@@ -59,9 +59,12 @@ class Analizador:
         """
 
         nodos_nuevos = []
-       
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -91,9 +94,12 @@ class Analizador:
         """Include ::= "#" Frase "!" """
 
         nodos_nuevos = []
-        
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -114,9 +120,12 @@ class Analizador:
         """DeclaraciónFunción ::= “.” Frase >> Tipo? << (Tipo Frase)*! Bloque “.” !"""
 
         nodos_nuevos = []
-        
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -144,7 +153,9 @@ class Analizador:
             self.__verificar(".")
             self.__verificar("!")
 
-            return Nodo(TipoNodo.DECLARACIONFUNCION, nodos=nodos_nuevos, atributos=atributos)
+            return Nodo(
+                TipoNodo.DECLARACIONFUNCION, nodos=nodos_nuevos, atributos=atributos
+            )
 
         except Exception as e:
             self.__manejar_error(f"Error en declaración de función: {e}")
@@ -154,9 +165,12 @@ class Analizador:
         """LlamadaFuncion ::=  Frase Término* !"""
 
         nodos_nuevos = []
-       
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -172,7 +186,9 @@ class Analizador:
 
             self.__verificar("!")
 
-            return Nodo(TipoNodo.LLAMADAFUNCION, nodos=nodos_nuevos, atributos=atributos)
+            return Nodo(
+                TipoNodo.LLAMADAFUNCION, nodos=nodos_nuevos, atributos=atributos
+            )
 
         except Exception as e:
             self.__manejar_error(f"Error en llamada de función: {e}")
@@ -184,9 +200,12 @@ class Analizador:
         """
 
         nodos_nuevos = []
-        
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -231,9 +250,12 @@ class Analizador:
         """DeclaraciónVariables ::=  : Frase Tipo = (Termino | Bool | Lista | ExpresionesMatematicas)!"""
 
         nodos_nuevos = []
-      
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -254,7 +276,9 @@ class Analizador:
                 nodos_nuevos += [self.__analizar_expresiones_matematicas()]
 
             self.__verificar("!")
-            return Nodo(TipoNodo.DECLARACIONVARIABLES, nodos=nodos_nuevos, atributos=atributos)
+            return Nodo(
+                TipoNodo.DECLARACIONVARIABLES, nodos=nodos_nuevos, atributos=atributos
+            )
 
         except Exception as e:
             self.__manejar_error(f"Error en declaración de variables: {e}")
@@ -263,9 +287,12 @@ class Analizador:
     def __analizar_funciones_predeterminadas(self):
         """FuncionesPredeterminadas ::=  (<<< | >>> | >>| <<) (Termino | Tipo | Lista | Bool) + !"""
         nodos_nuevos = []
-       
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
         try:
@@ -296,7 +323,10 @@ class Analizador:
             self.__verificar("!")
 
             return Nodo(
-                TipoNodo.FUNCIONESPREDETERMINADAS, valor=funcion, nodos=nodos_nuevos, atributos=atributos
+                TipoNodo.FUNCIONESPREDETERMINADAS,
+                valor=funcion,
+                nodos=nodos_nuevos,
+                atributos=atributos,
             )
 
         except Exception as e:
@@ -307,9 +337,12 @@ class Analizador:
         """ExpresionesMatematicas ::=  Termino (Simbolo Termino)*"""
 
         nodos_nuevos = []
-        
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -320,7 +353,9 @@ class Analizador:
                 nodos_nuevos += [self.__analizar_simbolo()]
                 nodos_nuevos += [self.__analizar_termino()]
 
-            return Nodo(TipoNodo.EXPRESIONESMATEMATICAS, nodos=nodos_nuevos, atributos=atributos)
+            return Nodo(
+                TipoNodo.EXPRESIONESMATEMATICAS, nodos=nodos_nuevos, atributos=atributos
+            )
 
         except Exception as e:
             self.__manejar_error(f"Error en expresiones matemáticas: {e}")
@@ -330,9 +365,12 @@ class Analizador:
         """Condicionales ::=  ¿(~)? Comparaciones ! Bloque  (¿”?” Comparaciones !  Bloque)* (“?” Bloque)? ¿!"""
 
         nodos_nuevos = []
-        
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -358,7 +396,11 @@ class Analizador:
                     # Para validar que no es un cierre de condicional
                     if self.token_actual.valor == "!":
                         self.__verificar("!")
-                        return Nodo(TipoNodo.CONDICIONALES, nodos=nodos_nuevos, atributos=atributos)
+                        return Nodo(
+                            TipoNodo.CONDICIONALES,
+                            nodos=nodos_nuevos,
+                            atributos=atributos,
+                        )
                     elif self.token_actual.valor == "?":
                         self.__verificar("?")
                         nodos_nuevos += [self.__analizar_comparaciones()]
@@ -387,9 +429,12 @@ class Analizador:
         """Bucles ::= “@” Comparaciones ! Bloque “@”  “!”"""
 
         nodos_nuevos = []
-        
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -425,9 +470,12 @@ class Analizador:
         """Asignacion ::= “\” Frase "=" (Bool | ExpresionesMatematicas | Lista | AccesoLista) "!" """
 
         nodos_nuevos = []
-        
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -475,9 +523,12 @@ class Analizador:
         """AsignacionElementoLista ::= AccesoLista "=" Termino "!"""
 
         nodos_nuevos = []
-        
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -494,7 +545,11 @@ class Analizador:
             # Verificar cierre de asignación
             self.__verificar("!")
 
-            return Nodo(TipoNodo.ASIGNACIONELEMENTOLISTA, nodos=nodos_nuevos, atributos=atributos)
+            return Nodo(
+                TipoNodo.ASIGNACIONELEMENTOLISTA,
+                nodos=nodos_nuevos,
+                atributos=atributos,
+            )
 
         except Exception as e:
             self.__manejar_error(f"Error en asignación en lista: {e}")
@@ -504,9 +559,12 @@ class Analizador:
         """Comparaciones ::=  Comparacion (CompuertasLogicas Comparacion)*"""
 
         nodos_nuevos = []
-        
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -529,9 +587,12 @@ class Analizador:
         """Comparacion ::=  Valor (Comparativos Valor)*"""
 
         nodos_nuevos = []
-       
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -554,9 +615,12 @@ class Analizador:
         """Lista::=  "{" (Termino ("," Termino)*)? "}" """
 
         nodos_nuevos = []
-       
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -590,9 +654,12 @@ class Analizador:
         """AccesoLista ::= “¨” Frase “[" Indice “]”"""
 
         nodos_nuevos = []
-        
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -622,9 +689,12 @@ class Analizador:
         """Valor ::=  Bool | ExpresionesMatematicas | AccesoLista"""
 
         nodos_nuevos = []
-       
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -662,9 +732,12 @@ class Analizador:
         """Indice ::= Indice ::= Numero | Frase"""
 
         nodos_nuevos = []
-       
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 
@@ -688,9 +761,12 @@ class Analizador:
         """Termino ::= Numero | Frase | Cadena"""
 
         nodos_nuevos = []
-        
+
         if self.token_actual is not None:
-            atributos = {"linea": self.token_actual.linea, "columna": self.token_actual.columna}
+            atributos = {
+                "linea": self.token_actual.linea,
+                "columna": self.token_actual.columna,
+            }
         else:
             atributos = {}
 

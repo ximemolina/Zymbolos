@@ -1,6 +1,7 @@
 import sys
 import importlib.machinery
-importlib.machinery.SOURCE_SUFFIXES.append('.zy')
+
+importlib.machinery.SOURCE_SUFFIXES.append(".zy")
 from explorador.Explorador import lexer
 from analizador.analizador import Analizador
 from analizador.tipo_token import TipoToken

@@ -23,6 +23,17 @@ class Asa:
             for hijo in nodo.nodos:
                 self.mostrar_asa(hijo, nivel + 1)
 
+    def walk(self, visitor):
+        """Recorre el ASA llamando al visitante sobre la raíz."""
+        if self.raiz is None:
+            return None
+        if hasattr(self.raiz, "accept"):
+            return self.raiz.accept(visitor)
+        # fallback: intentar que el visitor visite manualmente
+        visit = getattr(visitor, "visit", None)
+        if callable(visit):
+            return visit(self.raiz)
+
 
 # Definir el nodo del árbol de análisis sintáctico abstracto (ASA)
 class Nodo:
@@ -31,6 +42,24 @@ class Nodo:
         self.valor = valor  # es un string opcional (para los nodos hoja)
         self.nodos = nodos or []  # es una lista
         self.atributos = atributos or {}  # diccionario para línea, columna
+
+    def accept(self, visitor):
+        """Acepta un visitante: llama a `visit_<TIPONODO>` si existe,
+        si no, llama a `generic_visit` si está disponible, o recorre hijos.
+        """
+        method_name = f"visit_{self.tipo.name}"
+        method = getattr(visitor, method_name, None)
+        if callable(method):
+            return method(self)
+
+        generic = getattr(visitor, "generic_visit", None)
+        if callable(generic):
+            return generic(self)
+
+        # Por defecto, recorrer hijos
+        for child in self.nodos:
+            if hasattr(child, "accept"):
+                child.accept(visitor)
 
 
 # Definir los tipos de nodos que produce el analizador (son las reglas de la gramática)

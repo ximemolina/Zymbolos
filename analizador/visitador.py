@@ -30,7 +30,7 @@ class Visitador:
     """
 
     def __init__(self):
-        self.tabla_simbolos = TablaSimbolos()  
+        self.tabla_simbolos = TablaSimbolos()
         self.errores = []
 
     def visitar(self, node):
@@ -44,16 +44,15 @@ class Visitador:
             if hasattr(child, "accept"):
                 child.visitar(self)
 
-    
     def visitar_CADENA(self, node):
-        return "CCC"  
+        return "CCC"
 
     def visitar_BOOL(self, node):
-        return "BBB"   
+        return "BBB"
 
     def visitar_NUMERO(self, node):
         return "NNN"
-    
+
     def visitar_TIPO(self, node):
         return node.tipo
 
@@ -68,8 +67,7 @@ class Visitador:
                 f"Variable '{nombre}' no declarada en línea {node.atributos.get('linea')} columna {node.atributos.get('columna')}"
             )
             return None
-        return tipo 
-
+        return tipo
 
     def visitar_TERMINO(self, node):
         if node.nodos:
@@ -79,16 +77,16 @@ class Visitador:
                 f"Término vacío en línea {node.atributos.get('linea')} columna {node.atributos.get('columna')}"
             )
             return None
-        
+
     def visitar_COMPUERTA_LOGICA(self, node):
         return node.valor
 
-    def visitar_SIMBOLO(self,node):
+    def visitar_SIMBOLO(self, node):
         return node.valor
-    
+
     def visitar_ASIGNACIONELEMENTOLISTA(self, node):
-        tipo_lista = node.nodos[0].visitar(self)   
-        tipo_valor = node.nodos[1].visitar(self)   
+        tipo_lista = node.nodos[0].visitar(self)
+        tipo_valor = node.nodos[1].visitar(self)
 
         if tipo_lista != "OOO":
             self.errores.append(
@@ -99,10 +97,10 @@ class Visitador:
         if tipo_valor is None:
             return None
 
-        return "LLL"  
-    
+        return "LLL"
+
     def visitar_ACCESOLISTA(self, node):
-        tipo_lista = node.nodos[0].visitar(self) 
+        tipo_lista = node.nodos[0].visitar(self)
         tipo_indice = node.nodos[1].visitar(self)
 
         if tipo_lista != "LLL":
@@ -117,8 +115,8 @@ class Visitador:
             )
             return None
 
-        return "OOO" # como nuestras listas no son tipadas, es un valor genérico de término para este caso 
-    
+        return "OOO"  # como nuestras listas no son tipadas, es un valor genérico de término para este caso
+
     def visitar_INDICE(self, node):
         tipo_indice = node.nodos[0].visitar(self)
 
@@ -137,8 +135,8 @@ class Visitador:
                 self.errores.append(
                     f"Elemento inválido en lista en línea {node.atributos.get('linea')} columna {node.atributos.get('columna')}"
                 )
-        return "LLL" 
-    
+        return "LLL"
+
     def visitar_VALOR(self, node):
         if node.nodos:
             return node.nodos[0].visitar(self)

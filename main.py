@@ -7,7 +7,8 @@ from analizador.analizador import Analizador
 from analizador.tipo_token import TipoToken
 from analizador.visitador import Visitador
 
-#TODO: que se imprima la tabla de símbolos
+# TODO: que se imprima la tabla de símbolos
+
 
 def convertir_token_a_enum(token):
     """Convierte un token del lexer (con tipo string) a enum TipoToken"""
@@ -69,7 +70,6 @@ try:
 
             analizador.asa.mostrar_asa(analizador.asa.raiz)
 
-           
             print("\n \n \n VERIFICACIÓN \n")
             visitador = Visitador()
             analizador.asa.raiz.visitar(visitador)

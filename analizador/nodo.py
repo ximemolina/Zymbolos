@@ -43,23 +43,23 @@ class Nodo:
         self.nodos = nodos or []  # es una lista
         self.atributos = atributos or {}  # diccionario para línea, columna
 
-    def accept(self, visitor):
-        """Acepta un visitante: llama a `visit_<TIPONODO>` si existe,
+    def visitar(self, visitador):
+        """Acepta un visitante: llama a `visitar_<TIPONODO>` si existe,
         si no, llama a `generic_visit` si está disponible, o recorre hijos.
         """
-        method_name = f"visit_{self.tipo.name}"
-        method = getattr(visitor, method_name, None)
+        method_name = f"visitar_{self.tipo.name}"
+        method = getattr(visitador, method_name, None)
         if callable(method):
             return method(self)
 
-        generic = getattr(visitor, "generic_visit", None)
+        generic = getattr(visitador, "generic_visit", None)
         if callable(generic):
             return generic(self)
 
         # Por defecto, recorrer hijos
         for child in self.nodos:
-            if hasattr(child, "accept"):
-                child.accept(visitor)
+            if hasattr(child, "visitar"):
+                child.visitar(visitador)
 
 
 # Definir los tipos de nodos que produce el analizador (son las reglas de la gramática)

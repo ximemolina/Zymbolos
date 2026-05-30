@@ -163,12 +163,12 @@ class Visitador:
                     f"Error de tipos en asignación: variable '{nombre}' es de tipo {tipo_existente} pero se intenta asignar {tipo_valor} en línea {node.atributos.get('linea')} columna {node.atributos.get('columna')}"
                 )
         return tipo_valor
-    
+
     def visitar_CONDICIONALES(self, node):
         nodos = node.nodos
         i = 0
         while i < len(nodos):
-            
+
             if nodos[i].tipo.name == "COMPARACIONES":
                 tipo_comparacion = nodos[i].visitar(self)
                 if tipo_comparacion != "BBB":
@@ -176,7 +176,7 @@ class Visitador:
                         f"Error de tipos en condicional: se esperaba una comparación booleana pero se obtuvo {tipo_comparacion} en línea {node.atributos.get('linea')} columna {node.atributos.get('columna')}"
                     )
                 i += 1
-                
+
                 if i < len(nodos) and nodos[i].tipo.name == "BLOQUE":
                     nodos[i].visitar(self)
                     i += 1
@@ -187,7 +187,7 @@ class Visitador:
             else:
                 i += 1
         return None
-    
+
     def visitar_BUCLES(self, node):
         if len(node.nodos) >= 1:
             tipo_comparacion = node.nodos[0].visitar(self)
@@ -196,7 +196,5 @@ class Visitador:
                     f"Error de tipos en bucle: se esperaba una comparación booleana pero se obtuvo {tipo_comparacion} en línea {node.atributos.get('linea')} columna {node.atributos.get('columna')}"
                 )
         if len(node.nodos) >= 2:
-            node.nodos[1].visitar(self)  
+            node.nodos[1].visitar(self)
         return None
-    
-    

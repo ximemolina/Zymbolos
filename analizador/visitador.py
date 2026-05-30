@@ -166,3 +166,39 @@ class Visitador:
                 )
         return tipo_valor
     
+    def visitar_CONDICIONALES(self, node):
+        nodos = node.nodos
+        i = 0
+        while i < len(nodos):
+            
+            if nodos[i].tipo.name == "COMPARACIONES":
+                tipo_comparacion = nodos[i].visitar(self)
+                if tipo_comparacion != "BBB":
+                    self.errores.append(
+                        f"Error de tipos en condicional: se esperaba una comparación booleana pero se obtuvo {tipo_comparacion} en línea {node.atributos.get('linea')} columna {node.atributos.get('columna')}"
+                    )
+                i += 1
+                
+                if i < len(nodos) and nodos[i].tipo.name == "BLOQUE":
+                    nodos[i].visitar(self)
+                    i += 1
+            elif nodos[i].tipo.name == "BLOQUE":
+                # else
+                nodos[i].visitar(self)
+                i += 1
+            else:
+                i += 1
+        return None
+    
+    def visitar_BUCLES(self, node):
+        if len(node.nodos) >= 1:
+            tipo_comparacion = node.nodos[0].visitar(self)
+            if tipo_comparacion != "BBB":
+                self.errores.append(
+                    f"Error de tipos en bucle: se esperaba una comparación booleana pero se obtuvo {tipo_comparacion} en línea {node.atributos.get('linea')} columna {node.atributos.get('columna')}"
+                )
+        if len(node.nodos) >= 2:
+            node.nodos[1].visitar(self)  
+        return None
+    
+    

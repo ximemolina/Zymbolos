@@ -15,6 +15,3 @@ class Visitor:
         for child in getattr(node, "nodos", []) or []:
             if hasattr(child, "accept"):
                 child.accept(self)
-
-
-

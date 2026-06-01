@@ -212,7 +212,11 @@ class Visitador:
                             f"Error de tipos en comparación: operador '{operador}' no soporta {tipo_actual} y {tipo_derecho} en línea {node.atributos.get('linea')} columna {node.atributos.get('columna')}"
                         )
                 elif operador in ["==", "!="]:
-                    if tipo_actual != tipo_derecho and tipo_actual != "OOO" and tipo_derecho != "OOO":
+                    if (
+                        tipo_actual != tipo_derecho
+                        and tipo_actual != "OOO"
+                        and tipo_derecho != "OOO"
+                    ):
                         self.errores.append(
                             f"Error de tipos en comparación: no se pueden comparar {tipo_actual} con {tipo_derecho} en línea {node.atributos.get('linea')} columna {node.atributos.get('columna')}"
                         )
@@ -264,7 +268,11 @@ class Visitador:
             self.tabla_simbolos.nuevo_registro(nombre, tipo_valor)
         else:
             # CORRECCIÓN: verificar compatibilidad para Bool y Lista también
-            if tipo_valor is not None and tipo_valor != "OOO" and tipo_existente != tipo_valor:
+            if (
+                tipo_valor is not None
+                and tipo_valor != "OOO"
+                and tipo_existente != tipo_valor
+            ):
                 self.errores.append(
                     f"Error de tipos en asignación: variable '{nombre}' es de tipo {tipo_existente} "
                     f"pero se intenta asignar {tipo_valor} en línea {node.atributos.get('linea')} "
@@ -277,7 +285,11 @@ class Visitador:
         tipo_declarado = node.nodos[1].valor
         tipo_asignado = node.nodos[2].visitar(self)
 
-        if tipo_asignado is not None and tipo_asignado != "OOO" and tipo_declarado != tipo_asignado:
+        if (
+            tipo_asignado is not None
+            and tipo_asignado != "OOO"
+            and tipo_declarado != tipo_asignado
+        ):
             self.errores.append(
                 f"Error de tipos en declaración de variable '{nombre}': se declaró {tipo_declarado} "
                 f"pero se asignó {tipo_asignado} en línea {node.atributos.get('linea')} "
@@ -357,7 +369,11 @@ class Visitador:
                     firma = self.funciones.get(self.funcion_actual)
                     if firma and firma["return"] is not None:
                         tipo_retorno = tipos_argumentos[0]
-                        if tipo_retorno is not None and tipo_retorno != firma["return"] and tipo_retorno != "OOO":
+                        if (
+                            tipo_retorno is not None
+                            and tipo_retorno != firma["return"]
+                            and tipo_retorno != "OOO"
+                        ):
                             self.errores.append(
                                 f"Error de tipos en retorno de '{self.funcion_actual}': "
                                 f"se esperaba {firma['return']} pero se devuelve {tipo_retorno} "
@@ -419,7 +435,9 @@ class Visitador:
             )
             return return_type
 
-        for indice, (argumento, tipo_esperado) in enumerate(zip(argumentos, param_types), start=1):
+        for indice, (argumento, tipo_esperado) in enumerate(
+            zip(argumentos, param_types), start=1
+        ):
             tipo_argumento = argumento.visitar(self)
             if tipo_argumento is None:
                 continue

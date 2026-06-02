@@ -7,7 +7,6 @@ from analizador.analizador import Analizador
 from analizador.tipo_token import TipoToken
 from analizador.visitador import Visitador
 
-# TODO: que se imprima la tabla de símbolos
 
 
 def convertir_token_a_enum(token):
@@ -79,6 +78,10 @@ try:
                     print(error)
             else:
                 print("No se encontraron errores semánticos.")
+
+                
+                print("\nASA decorado:\n")
+                visitador.imprimir_asa_decorado(analizador.asa.raiz)
         else:
             print("Error en el análisis sintáctico")
     else:

@@ -12,25 +12,44 @@ class TablaSimbolos:
     def cerrar_bloque(self):
         self.ambitos.pop()
 
-    def nuevo_registro(self, nombre, tipo):
-        # CORRECCIÓN: verificar redeclaración en el mismo ámbito
+    def nuevo_registro(self, nombre, tipo, def_node=None):
+        
         if nombre in self.ambitos[-1]:
             return False  # señal de redeclaración
-        self.ambitos[-1][nombre] = tipo
+        # almacenamos un registro con tipo y referencia al nodo de definición
+        self.ambitos[-1][nombre] = {"tipo": tipo, "def_node": def_node}
         return True
 
     def actualizar(self, nombre, tipo):
         """Actualiza el tipo de una variable ya existente en cualquier ámbito."""
         for ambito in reversed(self.ambitos):
             if nombre in ambito:
-                ambito[nombre] = tipo
+                # ambito almacena un registro dict
+                if isinstance(ambito[nombre], dict):
+                    ambito[nombre]["tipo"] = tipo
+                else:
+                    ambito[nombre] = {"tipo": tipo, "def_node": None}
                 return True
         return False
 
     def obtener(self, nombre):
         for ambito in reversed(self.ambitos):
             if nombre in ambito:
-                return ambito[nombre]
+                registro = ambito[nombre]
+                # devolver tipo para compatibilidad con código existente
+                if isinstance(registro, dict):
+                    return registro.get("tipo")
+                return registro
+        return None
+
+    def obtener_registro(self, nombre):
+        """Devuelve el registro completo (dict) o None si no existe."""
+        for ambito in reversed(self.ambitos):
+            if nombre in ambito:
+                registro = ambito[nombre]
+                if isinstance(registro, dict):
+                    return registro
+                return {"tipo": registro, "def_node": None}
         return None
 
 
@@ -46,8 +65,29 @@ class Visitador:
         self.errores = []
         self.funciones = {}
         self.funcion_actual = None
-        # CORRECCIÓN: rastrear si la función actual tiene al menos un >>
+        
         self._funcion_tiene_retorno = False
+
+    def imprimir_tabla_parcial(self, accion, nombre=None):
+        """Imprime la tabla de símbolos cada vez que cambia.
+        accion: descripción breve del cambio (abrir, cerrar, declarar, asignar, param)
+        nombre: nombre de la variable afectada (opcional)
+        """
+        print(f"\n[Tabla de símbolos] acción: {accion}{' - '+nombre if nombre else ''}")
+        for i, ambito in enumerate(self.tabla_simbolos.ambitos):
+            print(f" Ámbito {i}:")
+            for var, registro in ambito.items():
+                if isinstance(registro, dict):
+                    tipo = registro.get('tipo')
+                    def_node = registro.get('def_node')
+                    if def_node and def_node.atributos:
+                        loc = f"(línea {def_node.atributos.get('linea')}, col {def_node.atributos.get('columna')})"
+                    else:
+                        loc = ""
+                    print(f"    {var} : {tipo} {loc}")
+                else:
+                    print(f"    {var} : {registro}")
+        print("")
 
     def visitar(self, node):
         method = getattr(self, f"visitar_{node.tipo.name}", None)
@@ -85,7 +125,6 @@ class Visitador:
     def visitar_SIMBOLO(self, node):
         return node.valor
 
-    # Método explícito para Comentarios; no hace nada semánticamente
     def visitar_COMENTARIOS(self, node):
         return None
 
@@ -101,6 +140,10 @@ class Visitador:
                 f"Variable '{nombre}' no declarada en línea {node.atributos.get('linea')} columna {node.atributos.get('columna')}"
             )
             return None
+        # decorar referencia con info de definición si existe
+        registro = self.tabla_simbolos.obtener_registro(nombre)
+        if registro and registro.get("def_node"):
+            node.atributos["ref"] = {"nombre": nombre, "tipo": registro.get("tipo")}
         return tipo
 
     def visitar_TERMINO(self, node):
@@ -265,9 +308,10 @@ class Visitador:
 
         if tipo_existente is None:
             # Variable nueva: registrar con el tipo inferido
-            self.tabla_simbolos.nuevo_registro(nombre, tipo_valor)
+            registrado = self.tabla_simbolos.nuevo_registro(nombre, tipo_valor, def_node=None)
+            if registrado:
+                self.imprimir_tabla_parcial('asignacion_nueva', nombre)
         else:
-            # CORRECCIÓN: verificar compatibilidad para Bool y Lista también
             if (
                 tipo_valor is not None
                 and tipo_valor != "OOO"
@@ -296,13 +340,18 @@ class Visitador:
                 f"columna {node.atributos.get('columna')}"
             )
 
-        # CORRECCIÓN: detectar redeclaración en el mismo ámbito
-        registrado = self.tabla_simbolos.nuevo_registro(nombre, tipo_declarado)
+        
+        registrado = self.tabla_simbolos.nuevo_registro(nombre, tipo_declarado, def_node=node)
         if not registrado:
             self.errores.append(
                 f"Variable '{nombre}' ya fue declarada en este ámbito en línea {node.atributos.get('linea')} "
                 f"columna {node.atributos.get('columna')}"
             )
+        else:
+            # decorar nodo de declaración con referencia a sí mismo
+            node.atributos.setdefault("def", {"nombre": nombre, "tipo": tipo_declarado})
+            # imprimir cambio en la tabla
+            self.imprimir_tabla_parcial('declarar', nombre)
         return tipo_declarado
 
     # ------------------------------------------------------------------ #
@@ -322,7 +371,6 @@ class Visitador:
         return None
 
     def visitar_CONDICIONALES(self, node):
-        # CORRECCIÓN: validar BBB en TODOS los bloques de condición (if y else-if)
         nodos = node.nodos
         i = 0
         while i < len(nodos):
@@ -351,11 +399,10 @@ class Visitador:
     # ------------------------------------------------------------------ #
 
     def visitar_FUNCIONESPREDETERMINADAS(self, node):
-        # CORRECCIÓN: verificar cada operador según sus reglas
         operador = node.valor
         tipos_argumentos = [arg.visitar(self) for arg in node.nodos]
 
-        # >> (print/retorno): debe tener exactamente 1 argumento
+        
         if operador == ">>":
             if len(tipos_argumentos) != 1:
                 self.errores.append(
@@ -455,9 +502,13 @@ class Visitador:
 
     def visitar_BLOQUE(self, node):
         self.tabla_simbolos.abrir_bloque()
+        # imprimir estado tras abrir ámbito
+        self.imprimir_tabla_parcial('abrir_ambito')
         for child in node.nodos:
             child.visitar(self)
         self.tabla_simbolos.cerrar_bloque()
+        # imprimir estado tras cerrar ámbito
+        self.imprimir_tabla_parcial('cerrar_ambito')
         return None
 
     def visitar_PROGRAMA(self, node):
@@ -470,7 +521,7 @@ class Visitador:
             child.visitar(self)
         return None
 
-    # CORRECCIÓN: Include con advertencia si no hay sistema de carga real
+    
     def visitar_INCLUDE(self, node):
         nombre = node.nodos[0].valor if node.nodos else "desconocido"
         # Advertencia informativa; no bloquea la verificación semántica
@@ -489,18 +540,22 @@ class Visitador:
         return_type, parametros, nombres = self._extraer_firma_funcion(node)
 
         self.tabla_simbolos.abrir_bloque()
+        # imprimir tras abrir bloque de función
+        self.imprimir_tabla_parcial('abrir_ambito_funcion', nombre)
         for nombre_param, tipo_param in zip(nombres, parametros):
-            self.tabla_simbolos.nuevo_registro(nombre_param, tipo_param)
+            registrado = self.tabla_simbolos.nuevo_registro(nombre_param, tipo_param, def_node=node)
+            if registrado:
+                self.imprimir_tabla_parcial('parametro', nombre_param)
 
         funcion_anterior = self.funcion_actual
         self.funcion_actual = nombre
-        # CORRECCIÓN: rastrear si aparece al menos un >>
+        
         self._funcion_tiene_retorno = False
 
         if node.nodos and node.nodos[-1].tipo == TipoNodo.BLOQUE:
             node.nodos[-1].visitar(self)
 
-        # CORRECCIÓN: emitir error si la función declara tipo de retorno pero no tiene >>
+        
         if return_type is not None and not self._funcion_tiene_retorno:
             self.errores.append(
                 f"Función '{nombre}' declara tipo de retorno {return_type} pero no contiene "
@@ -511,6 +566,8 @@ class Visitador:
         self.funcion_actual = funcion_anterior
         self._funcion_tiene_retorno = False
         self.tabla_simbolos.cerrar_bloque()
+        # imprimir tras cerrar bloque de función
+        self.imprimir_tabla_parcial('cerrar_ambito_funcion', nombre)
         return None
 
     # ------------------------------------------------------------------ #
@@ -578,7 +635,7 @@ class Visitador:
             )
             return None
 
-        # CORRECCIÓN: operador & (AND a nivel de bits, solo NNN)
+       
         if operador == "&":
             if tipo_izq == "NNN" and tipo_derecho == "NNN":
                 return "NNN"
@@ -593,3 +650,25 @@ class Visitador:
             f"columna {atributos.get('columna')}"
         )
         return None
+
+    def imprimir_asa_decorado(self, nodo, nivel=0):
+        """Imprime el ASA en pre-orden mostrando decoraciones (definición/referencia) por nodo.
+        Formato simple con indentación por niveles para asemejarse al estilo de `mostrar_asa`.
+        """
+        if nodo is None:
+            return
+
+        indent = "  " * nivel
+        print(f"{indent}< {nodo.tipo.value}, {nodo.valor} > \n")
+
+        # imprimir decoraciones si existen
+        if nodo.atributos.get("def"):
+            d = nodo.atributos["def"]
+            print(f"{indent}  [definición] {d['nombre']} : {d['tipo']} \n")
+        if nodo.atributos.get("ref"):
+            r = nodo.atributos["ref"]
+            print(f"{indent}  [referencia] {r['nombre']} : {r['tipo']} \n")
+
+        # recorrer hijos
+        for hijo in getattr(nodo, "nodos", []) or []:
+            self.imprimir_asa_decorado(hijo, nivel + 1)

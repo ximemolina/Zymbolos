@@ -7,4 +7,5 @@ _NOTA: estos errores están pendientes
 >> "El precio es alto" ;
 ¿!
 res = 10 & 5 !
+\ precio = "a" + 8 !
 .!

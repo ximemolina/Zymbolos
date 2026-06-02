@@ -8,7 +8,6 @@ from analizador.tipo_token import TipoToken
 from analizador.visitador import Visitador
 
 
-
 def convertir_token_a_enum(token):
     """Convierte un token del lexer (con tipo string) a enum TipoToken"""
 
@@ -79,7 +78,6 @@ try:
             else:
                 print("No se encontraron errores semánticos.")
 
-                
                 print("\nASA decorado:\n")
                 visitador.imprimir_asa_decorado(analizador.asa.raiz)
         else:

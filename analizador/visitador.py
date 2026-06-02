@@ -13,7 +13,7 @@ class TablaSimbolos:
         self.ambitos.pop()
 
     def nuevo_registro(self, nombre, tipo, def_node=None):
-        
+
         if nombre in self.ambitos[-1]:
             return False  # señal de redeclaración
         # almacenamos un registro con tipo y referencia al nodo de definición
@@ -65,7 +65,7 @@ class Visitador:
         self.errores = []
         self.funciones = {}
         self.funcion_actual = None
-        
+
         self._funcion_tiene_retorno = False
 
     def imprimir_tabla_parcial(self, accion, nombre=None):
@@ -78,8 +78,8 @@ class Visitador:
             print(f" Ámbito {i}:")
             for var, registro in ambito.items():
                 if isinstance(registro, dict):
-                    tipo = registro.get('tipo')
-                    def_node = registro.get('def_node')
+                    tipo = registro.get("tipo")
+                    def_node = registro.get("def_node")
                     if def_node and def_node.atributos:
                         loc = f"(línea {def_node.atributos.get('linea')}, col {def_node.atributos.get('columna')})"
                     else:
@@ -308,9 +308,11 @@ class Visitador:
 
         if tipo_existente is None:
             # Variable nueva: registrar con el tipo inferido
-            registrado = self.tabla_simbolos.nuevo_registro(nombre, tipo_valor, def_node=None)
+            registrado = self.tabla_simbolos.nuevo_registro(
+                nombre, tipo_valor, def_node=None
+            )
             if registrado:
-                self.imprimir_tabla_parcial('asignacion_nueva', nombre)
+                self.imprimir_tabla_parcial("asignacion_nueva", nombre)
         else:
             if (
                 tipo_valor is not None
@@ -340,8 +342,9 @@ class Visitador:
                 f"columna {node.atributos.get('columna')}"
             )
 
-        
-        registrado = self.tabla_simbolos.nuevo_registro(nombre, tipo_declarado, def_node=node)
+        registrado = self.tabla_simbolos.nuevo_registro(
+            nombre, tipo_declarado, def_node=node
+        )
         if not registrado:
             self.errores.append(
                 f"Variable '{nombre}' ya fue declarada en este ámbito en línea {node.atributos.get('linea')} "
@@ -351,7 +354,7 @@ class Visitador:
             # decorar nodo de declaración con referencia a sí mismo
             node.atributos.setdefault("def", {"nombre": nombre, "tipo": tipo_declarado})
             # imprimir cambio en la tabla
-            self.imprimir_tabla_parcial('declarar', nombre)
+            self.imprimir_tabla_parcial("declarar", nombre)
         return tipo_declarado
 
     # ------------------------------------------------------------------ #
@@ -402,7 +405,6 @@ class Visitador:
         operador = node.valor
         tipos_argumentos = [arg.visitar(self) for arg in node.nodos]
 
-        
         if operador == ">>":
             if len(tipos_argumentos) != 1:
                 self.errores.append(
@@ -503,12 +505,12 @@ class Visitador:
     def visitar_BLOQUE(self, node):
         self.tabla_simbolos.abrir_bloque()
         # imprimir estado tras abrir ámbito
-        self.imprimir_tabla_parcial('abrir_ambito')
+        self.imprimir_tabla_parcial("abrir_ambito")
         for child in node.nodos:
             child.visitar(self)
         self.tabla_simbolos.cerrar_bloque()
         # imprimir estado tras cerrar ámbito
-        self.imprimir_tabla_parcial('cerrar_ambito')
+        self.imprimir_tabla_parcial("cerrar_ambito")
         return None
 
     def visitar_PROGRAMA(self, node):
@@ -521,7 +523,6 @@ class Visitador:
             child.visitar(self)
         return None
 
-    
     def visitar_INCLUDE(self, node):
         nombre = node.nodos[0].valor if node.nodos else "desconocido"
         # Advertencia informativa; no bloquea la verificación semántica
@@ -541,21 +542,22 @@ class Visitador:
 
         self.tabla_simbolos.abrir_bloque()
         # imprimir tras abrir bloque de función
-        self.imprimir_tabla_parcial('abrir_ambito_funcion', nombre)
+        self.imprimir_tabla_parcial("abrir_ambito_funcion", nombre)
         for nombre_param, tipo_param in zip(nombres, parametros):
-            registrado = self.tabla_simbolos.nuevo_registro(nombre_param, tipo_param, def_node=node)
+            registrado = self.tabla_simbolos.nuevo_registro(
+                nombre_param, tipo_param, def_node=node
+            )
             if registrado:
-                self.imprimir_tabla_parcial('parametro', nombre_param)
+                self.imprimir_tabla_parcial("parametro", nombre_param)
 
         funcion_anterior = self.funcion_actual
         self.funcion_actual = nombre
-        
+
         self._funcion_tiene_retorno = False
 
         if node.nodos and node.nodos[-1].tipo == TipoNodo.BLOQUE:
             node.nodos[-1].visitar(self)
 
-        
         if return_type is not None and not self._funcion_tiene_retorno:
             self.errores.append(
                 f"Función '{nombre}' declara tipo de retorno {return_type} pero no contiene "
@@ -567,7 +569,7 @@ class Visitador:
         self._funcion_tiene_retorno = False
         self.tabla_simbolos.cerrar_bloque()
         # imprimir tras cerrar bloque de función
-        self.imprimir_tabla_parcial('cerrar_ambito_funcion', nombre)
+        self.imprimir_tabla_parcial("cerrar_ambito_funcion", nombre)
         return None
 
     # ------------------------------------------------------------------ #
@@ -635,7 +637,6 @@ class Visitador:
             )
             return None
 
-       
         if operador == "&":
             if tipo_izq == "NNN" and tipo_derecho == "NNN":
                 return "NNN"

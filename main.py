@@ -5,6 +5,7 @@ importlib.machinery.SOURCE_SUFFIXES.append(".zy")
 from explorador.Explorador import lexer
 from analizador.analizador import Analizador
 from analizador.tipo_token import TipoToken
+from analizador.visitador import Visitador
 
 
 def convertir_token_a_enum(token):
@@ -66,6 +67,19 @@ try:
         if analizador.asa.raiz:
 
             analizador.asa.mostrar_asa(analizador.asa.raiz)
+
+            print("\n \n \n VERIFICACIÓN \n")
+            visitador = Visitador()
+            analizador.asa.raiz.visitar(visitador)
+            if visitador.errores:
+                print("Errores semánticos encontrados:")
+                for error in visitador.errores:
+                    print(error)
+            else:
+                print("No se encontraron errores semánticos.")
+
+                print("\nASA decorado:\n")
+                visitador.imprimir_asa_decorado(analizador.asa.raiz)
         else:
             print("Error en el análisis sintáctico")
     else:

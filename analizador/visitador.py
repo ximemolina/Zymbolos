@@ -660,7 +660,7 @@ class Visitador:
             return
 
         indent = "  " * nivel
-        print(f"{indent}< {nodo.tipo.value}, {nodo.valor} > \n")
+        print(f"{indent}< {nodo.tipo.value}, {nodo.valor}, {nodo.atributos}> \n")
 
         # imprimir decoraciones si existen
         if nodo.atributos.get("def"):

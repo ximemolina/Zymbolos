@@ -1,0 +1,70 @@
+{
+  "name": "zymbolos",
+  "displayName": "Zymbolos",
+  "description": "Syntax highlighting for Zymbolos",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.74.0" },
+  "categories": ["Programming Languages"],
+  "contributes": {
+    "languages": [
+      {
+        "id": "zymbolos",
+        "aliases": ["Zymbolos", "zymbolos"],
+        "extensions": [".zy"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "zymbolos",
+        "scopeName": "source.zymbolos",
+        "path": "./syntaxes/zymbolos.tmLanguage.json"
+      }
+    ],
+    "configurationDefaults": {
+      "editor.tokenColorCustomizations": {
+        "textMateRules": [
+          { "scope": "comment.block.zymbolos",                        "settings": { "foreground": "#8896a8", "fontStyle": "italic" } },
+          { "scope": "comment.line.zymbolos",                         "settings": { "foreground": "#8896a8", "fontStyle": "italic" } },
+          { "scope": "string.quoted.double.zymbolos",                 "settings": { "foreground": "#e8a838" } },
+          { "scope": "constant.character.escape.zymbolos",            "settings": { "foreground": "#e89070" } },
+          { "scope": "entity.name.function.zymbolos",                 "settings": { "foreground": "#4caf82", "fontStyle": "bold" } },
+          { "scope": "keyword.declaration.function.zymbolos",         "settings": { "foreground": "#9b6fd4" } },
+          { "scope": "keyword.declaration.variable.zymbolos",         "settings": { "foreground": "#9b6fd4" } },
+          { "scope": "keyword.control.import.zymbolos",               "settings": { "foreground": "#9b6fd4" } },
+          { "scope": "keyword.control.loop.zymbolos",                 "settings": { "foreground": "#d45f8a", "fontStyle": "bold" } },
+          { "scope": "keyword.control.conditional.zymbolos",          "settings": { "foreground": "#d45f8a", "fontStyle": "bold" } },
+          { "scope": "keyword.control.else.zymbolos",                 "settings": { "foreground": "#d45f8a" } },
+          { "scope": "keyword.operator.negation.zymbolos",            "settings": { "foreground": "#d45f8a" } },
+          { "scope": "keyword.operator.assignment-start.zymbolos",    "settings": { "foreground": "#9b6fd4" } },
+          { "scope": "keyword.operator.list-access.zymbolos",         "settings": { "foreground": "#9b6fd4" } },
+          { "scope": "storage.type.zymbolos",                         "settings": { "foreground": "#5abf5a" } },
+          { "scope": "constant.language.boolean.zymbolos",            "settings": { "foreground": "#dcdc61", "fontStyle": "bold" } },
+          { "scope": "constant.numeric.zymbolos",                     "settings": { "foreground": "#38bcd4" } },
+          { "scope": "support.function.print.zymbolos",               "settings": { "foreground": "#5c7ee8", "fontStyle": "bold" } },
+          { "scope": "support.function.input.zymbolos",               "settings": { "foreground": "#5c7ee8", "fontStyle": "bold" } },
+          { "scope": "keyword.operator.io.out.zymbolos",              "settings": { "foreground": "#5c7ee8" } },
+          { "scope": "keyword.operator.io.in.zymbolos",               "settings": { "foreground": "#5c7ee8" } },
+          { "scope": "keyword.operator.io.zymbolos",                  "settings": { "foreground": "#5c7ee8" } },
+          { "scope": "keyword.operator.comparison.zymbolos",          "settings": { "foreground": "#7a9db8" } },
+          { "scope": "keyword.operator.logical.zymbolos",             "settings": { "foreground": "#7a9db8" } },
+          { "scope": "keyword.operator.assignment.zymbolos",          "settings": { "foreground": "#7a9db8" } },
+          { "scope": "keyword.operator.assignment.compound.zymbolos", "settings": { "foreground": "#7a9db8" } },
+          { "scope": "keyword.operator.arithmetic.zymbolos",          "settings": { "foreground": "#7a9db8" } },
+          { "scope": "keyword.operator.increment.zymbolos",           "settings": { "foreground": "#7a9db8" } },
+          { "scope": "punctuation.terminator.statement.zymbolos",     "settings": { "foreground": "#c03c82", "fontStyle": "bold" } },
+          { "scope": "punctuation.terminator.zymbolos",               "settings": { "foreground": "#c03c82" } },
+          { "scope": "entity.name.namespace.zymbolos",                "settings": { "foreground": "#4caf82" } },
+          { "scope": "variable.other.declaration.zymbolos",           "settings": { "foreground": "#dde4f4" } },
+          { "scope": "variable.other.assigned.zymbolos",              "settings": { "foreground": "#dde4f4" } },
+          { "scope": "variable.other.zymbolos",                       "settings": { "foreground": "#dde4f4" } },
+          { "scope": "punctuation.section.list.begin.zymbolos",       "settings": { "foreground": "#e8a838" } },
+          { "scope": "punctuation.section.list.end.zymbolos",         "settings": { "foreground": "#e8a838" } },
+          { "scope": "punctuation.section.brackets.begin.zymbolos",   "settings": { "foreground": "#e8a838" } },
+          { "scope": "punctuation.section.brackets.end.zymbolos",     "settings": { "foreground": "#e8a838" } },
+          { "scope": "punctuation.separator.comma.zymbolos",          "settings": { "foreground": "#8896a8" } }
+        ]
+      }
+    }
+  }
+}

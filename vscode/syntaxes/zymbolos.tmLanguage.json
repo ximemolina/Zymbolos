@@ -1,0 +1,166 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Zymbolos",
+  "scopeName": "source.zymbolos",
+  "patterns": [
+    { "include": "#comments_block" },
+    { "include": "#comments_line" },
+    { "include": "#strings" },
+    { "include": "#include_stmt" },
+    { "include": "#func_declaration" },
+    { "include": "#loop" },
+    { "include": "#conditional" },
+    { "include": "#list_access" },
+    { "include": "#assignment" },
+    { "include": "#var_declaration" },
+    { "include": "#io_ops" },
+    { "include": "#booleans" },
+    { "include": "#types" },
+    { "include": "#numbers" },
+    { "include": "#increment" },
+    { "include": "#rel_ops" },
+    { "include": "#logic_ops" },
+    { "include": "#assign_ops" },
+    { "include": "#arith_ops" },
+    { "include": "#terminator" },
+    { "include": "#negation" },
+    { "include": "#list_delimiters" },
+    { "include": "#identifiers" }
+  ],
+  "repository": {
+    "comments_block": {
+      "name": "comment.block.zymbolos",
+      "begin": "__",
+      "end": "__",
+      "beginCaptures": { "0": { "name": "punctuation.definition.comment.begin.zymbolos" } },
+      "endCaptures":   { "0": { "name": "punctuation.definition.comment.end.zymbolos"   } }
+    },
+    "comments_line": {
+      "name": "comment.line.zymbolos",
+      "match": "_[^\\n]*"
+    },
+    "strings": {
+      "name": "string.quoted.double.zymbolos",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        { "name": "constant.character.escape.zymbolos", "match": "\\\\." }
+      ]
+    },
+    "include_stmt": {
+      "match": "(#)\\s*([a-zA-Z_ñÑ][a-zA-Z0-9_ñÑ]*)\\s*(!)",
+      "captures": {
+        "1": { "name": "keyword.control.import.zymbolos" },
+        "2": { "name": "entity.name.namespace.zymbolos" },
+        "3": { "name": "punctuation.terminator.zymbolos" }
+      }
+    },
+    "func_declaration": {
+      "match": "(\\.)\\s*([a-zA-Z_ñÑ][a-zA-Z0-9_ñÑ]*)\\s*(>>)",
+      "captures": {
+        "1": { "name": "keyword.declaration.function.zymbolos" },
+        "2": { "name": "entity.name.function.zymbolos" },
+        "3": { "name": "keyword.operator.io.zymbolos" }
+      }
+    },
+    "loop": {
+      "name": "keyword.control.loop.zymbolos",
+      "match": "@"
+    },
+    "conditional": {
+      "patterns": [
+        { "name": "keyword.control.conditional.zymbolos", "match": "¿" },
+        { "name": "keyword.control.else.zymbolos",        "match": "\\?" },
+        { "name": "keyword.operator.negation.zymbolos",   "match": "~" }
+      ]
+    },
+    "list_access": {
+      "match": "(¨)\\s*([a-zA-Z_ñÑ][a-zA-Z0-9_ñÑ]*)\\s*(\\[)([a-zA-Z0-9_ñÑ]+)(\\])",
+      "captures": {
+        "1": { "name": "keyword.operator.list-access.zymbolos" },
+        "2": { "name": "variable.other.zymbolos" },
+        "3": { "name": "punctuation.section.brackets.begin.zymbolos" },
+        "4": { "name": "variable.other.index.zymbolos" },
+        "5": { "name": "punctuation.section.brackets.end.zymbolos" }
+      }
+    },
+    "assignment": {
+      "match": "(\\\\)\\s*([a-zA-Z_ñÑ][a-zA-Z0-9_ñÑ]*)",
+      "captures": {
+        "1": { "name": "keyword.operator.assignment-start.zymbolos" },
+        "2": { "name": "variable.other.assigned.zymbolos" }
+      }
+    },
+    "var_declaration": {
+      "match": "(:)\\s*([a-zA-Z_ñÑ][a-zA-Z0-9_ñÑ]*)\\s*(\\b(?:NNN|CCC|BBB|OOO|EEE|LLL)\\b)",
+      "captures": {
+        "1": { "name": "keyword.declaration.variable.zymbolos" },
+        "2": { "name": "variable.other.declaration.zymbolos" },
+        "3": { "name": "storage.type.zymbolos" }
+      }
+    },
+    "io_ops": {
+      "patterns": [
+        { "name": "support.function.print.zymbolos",  "match": "<<<" },
+        { "name": "support.function.input.zymbolos",  "match": ">>>" },
+        { "name": "keyword.operator.io.out.zymbolos", "match": "<<" },
+        { "name": "keyword.operator.io.in.zymbolos",  "match": ">>" }
+      ]
+    },
+    "booleans": {
+      "name": "constant.language.boolean.zymbolos",
+      "match": "\\b(VV|FF)\\b"
+    },
+    "types": {
+      "name": "storage.type.zymbolos",
+      "match": "\\b(NNN|CCC|BBB|OOO|EEE|LLL)\\b"
+    },
+    "numbers": {
+      "name": "constant.numeric.zymbolos",
+      "match": "-?\\d+(\\.\\d+)?"
+    },
+    "increment": {
+      "name": "keyword.operator.increment.zymbolos",
+      "match": "\\+\\+"
+    },
+    "rel_ops": {
+      "name": "keyword.operator.comparison.zymbolos",
+      "match": "<=|>=|==|!=|<|>"
+    },
+    "logic_ops": {
+      "name": "keyword.operator.logical.zymbolos",
+      "match": "&&|\\|\\|"
+    },
+    "assign_ops": {
+      "patterns": [
+        { "name": "keyword.operator.assignment.compound.zymbolos", "match": "\\+=|-=|\\*=|/=|%=" },
+        { "name": "keyword.operator.assignment.zymbolos",          "match": "=" }
+      ]
+    },
+    "arith_ops": {
+      "name": "keyword.operator.arithmetic.zymbolos",
+      "match": "[+\\-*/%^&]"
+    },
+    "terminator": {
+      "name": "punctuation.terminator.statement.zymbolos",
+      "match": "!"
+    },
+    "negation": {
+      "name": "keyword.operator.negation.zymbolos",
+      "match": "~"
+    },
+    "list_delimiters": {
+      "patterns": [
+        { "name": "punctuation.section.list.begin.zymbolos",    "match": "\\{" },
+        { "name": "punctuation.section.list.end.zymbolos",      "match": "\\}" },
+        { "name": "punctuation.section.brackets.begin.zymbolos","match": "\\[" },
+        { "name": "punctuation.section.brackets.end.zymbolos",  "match": "\\]" },
+        { "name": "punctuation.separator.comma.zymbolos",       "match": ","   }
+      ]
+    },
+    "identifiers": {
+      "name": "variable.other.zymbolos",
+      "match": "[a-zA-Z_ñÑ][a-zA-Z0-9_ñÑ]*"
+    }
+  }
+}

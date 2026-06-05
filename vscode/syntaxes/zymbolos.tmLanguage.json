@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "$schema": "https://github.com/ximemolina/Zymbolos/blob/main/vscode/syntaxes/zymbolos.tmLanguage.json",
   "name": "Zymbolos",
   "scopeName": "source.zymbolos",
   "patterns": [

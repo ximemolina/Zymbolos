@@ -41,10 +41,7 @@ try:
 
     exito(f"Tokens encontrados: {len(todos_los_tokens)}")
 
-    tokens_convertidos = [
-        convertir_token_a_enum(token)
-        for token in todos_los_tokens
-    ]
+    tokens_convertidos = [convertir_token_a_enum(token) for token in todos_los_tokens]
 
     if not tokens_convertidos:
         error("No hay tokens para analizar")
@@ -52,10 +49,7 @@ try:
 
     titulo("ANÁLISIS SINTÁCTICO")
 
-    analizador = Analizador(
-        tokens_convertidos[1:],
-        tokens_convertidos[0]
-    )
+    analizador = Analizador(tokens_convertidos[1:], tokens_convertidos[0])
 
     analizador.analizar()
 
@@ -94,4 +88,5 @@ except Exception as e:
     error(f"Error inesperado: {e}")
 
     import traceback
+
     traceback.print_exc()

@@ -7,7 +7,7 @@ from explorador.Explorador import lexer
 from analizador.analizador import Analizador
 from analizador.tipo_token import convertir_token_a_enum
 from verificador.visitador import Visitador
-
+from generador.generador import Generador
 
 def titulo(texto):
     print("\n" + "=" * 70)
@@ -78,6 +78,15 @@ try:
 
         titulo("ASA DECORADO")
         visitador.imprimir_asa_decorado(analizador.asa.raiz)
+
+    generador = Generador(analizador.asa)
+
+    codigo_python = generador.generar()
+
+    with open("codigo_final.py", "w", encoding="utf-8") as archivo:
+        archivo.write(codigo_python)
+
+    print("Código generado en codigo_final.py")
 
     titulo("LISTO CALISTO")
 

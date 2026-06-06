@@ -1,6 +1,7 @@
 from analizador.nodo import Asa
 from generador.visitadores import VisitantePython
 
+
 class Generador:
 
     asa: Asa
@@ -30,18 +31,18 @@ def leer_entero():
         self.visitador = VisitantePython()
 
     def imprimir_asa(self):
-        '''
+        """
         Imprimer el árbol de análisis sintáctico abstracto (ASA)
-        '''
+        """
         if self.asa.raiz is None:
             print([])
         else:
             self.asa.mostrar_asa(self.asa.raiz)
 
     def generar(self):
-        '''
+        """
         Generar código Python a partir del ASA
-        '''
+        """
         codigo_generado = self.visitador.visitar(self.asa.raiz)
 
         return self.ambiente_estandar + "\n\n" + codigo_generado

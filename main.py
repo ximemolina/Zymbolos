@@ -9,6 +9,7 @@ from analizador.tipo_token import convertir_token_a_enum
 from verificador.visitador import Visitador
 from generador.generador import Generador
 
+
 def titulo(texto):
     print("\n" + "=" * 70)
     print(f" {texto}")

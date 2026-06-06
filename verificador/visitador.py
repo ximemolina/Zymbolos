@@ -1,5 +1,5 @@
 import enum
-from .nodo import Nodo, TipoNodo
+from analizador.nodo import Nodo, TipoNodo
 
 
 class TablaSimbolos:

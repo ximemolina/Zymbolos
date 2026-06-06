@@ -2,93 +2,96 @@ import sys
 import importlib.machinery
 
 importlib.machinery.SOURCE_SUFFIXES.append(".zy")
+
 from explorador.Explorador import lexer
 from analizador.analizador import Analizador
-from analizador.tipo_token import TipoToken
-from analizador.visitador import Visitador
+from analizador.tipo_token import convertir_token_a_enum
+from verificador.visitador import Visitador
 
 
-def convertir_token_a_enum(token):
-    """Convierte un token del lexer (con tipo string) a enum TipoToken"""
+def titulo(texto):
+    print("\n" + "=" * 70)
+    print(f" {texto}")
+    print("=" * 70)
 
-    mapeo = {
-        "STRUCT": TipoToken.STRUCT,
-        "IDENTIFICADOR": TipoToken.IDENTIFICADOR,
-        "IO_OP": TipoToken.IO_OP,
-        "TIPO": TipoToken.TIPO,
-        "NUMERO": TipoToken.NUMERO,
-        "ARITH_OP": TipoToken.ARITH_OP,
-        "REL_OP": TipoToken.REL_OP,
-        "BOOL": TipoToken.BOOL,
-        "STRING": TipoToken.STRING,
-        "LOGIC_OP": TipoToken.LOGIC_OP,
-        "DELIM": TipoToken.DELIM,
-        "ASSIGN": TipoToken.ASSIGN,
-        "INCREMENT": TipoToken.INCREMENT,
-    }
 
-    class TokenConvertido:
-        def __init__(self, tipo, valor, linea, columna):
-            self.tipo = tipo
-            self.valor = valor
-            self.linea = linea
-            self.columna = columna
+def exito(texto):
+    print(f"✓ {texto}")
 
-    tipo_enum = mapeo.get(token.tipo, TipoToken.IDENTIFICADOR)
-    return TokenConvertido(tipo_enum, token.valor, token.linea, token.columna)
+
+def error(texto):
+    print(f"✗ {texto}")
 
 
 if len(sys.argv) != 2:
-    print("Uso: python main.py <archivo>")
+    error("Uso: python main.py <archivo>")
     sys.exit(1)
 
 archivo = sys.argv[1]
 
 try:
-
     todos_los_tokens = []
 
-    print("EXPLORACION \n")
+    titulo("EXPLORACIÓN LÉXICA")
 
     with open(archivo, "r", encoding="utf-8") as file:
         for numero_linea, linea in enumerate(file, start=1):
             tokens_linea = lexer(linea, numero_linea)
             todos_los_tokens.extend(tokens_linea)
 
-    tokens_convertidos = [convertir_token_a_enum(token) for token in todos_los_tokens]
+    exito(f"Tokens encontrados: {len(todos_los_tokens)}")
 
-    if tokens_convertidos:
-        print("\n \n \n ANALISIS \n")
+    tokens_convertidos = [
+        convertir_token_a_enum(token)
+        for token in todos_los_tokens
+    ]
 
-        analizador = Analizador(tokens_convertidos[1:], tokens_convertidos[0])
+    if not tokens_convertidos:
+        error("No hay tokens para analizar")
+        sys.exit(1)
 
-        analizador.analizar()
+    titulo("ANÁLISIS SINTÁCTICO")
 
-        if analizador.asa.raiz:
+    analizador = Analizador(
+        tokens_convertidos[1:],
+        tokens_convertidos[0]
+    )
 
-            analizador.asa.mostrar_asa(analizador.asa.raiz)
+    analizador.analizar()
 
-            print("\n \n \n VERIFICACIÓN \n")
-            visitador = Visitador()
-            analizador.asa.raiz.visitar(visitador)
-            if visitador.errores:
-                print("Errores semánticos encontrados:")
-                for error in visitador.errores:
-                    print(error)
-            else:
-                print("No se encontraron errores semánticos.")
+    if not analizador.asa.raiz:
+        error("Error en el análisis sintáctico")
+        sys.exit(1)
 
-                print("\nASA decorado:\n")
-                visitador.imprimir_asa_decorado(analizador.asa.raiz)
-        else:
-            print("Error en el análisis sintáctico")
+    exito("Análisis sintáctico completado")
+
+    titulo("ÁRBOL DE SINTAXIS ABSTRACTA (ASA)")
+    analizador.asa.mostrar_asa(analizador.asa.raiz)
+
+    titulo("VERIFICACIÓN SEMÁNTICA")
+
+    visitador = Visitador()
+    analizador.asa.raiz.visitar(visitador)
+
+    if visitador.errores:
+        error("Se encontraron errores semánticos:\n")
+
+        for i, err in enumerate(visitador.errores, start=1):
+            print(f"  [{i}] {err}")
+
     else:
-        print("No hay tokens para analizar")
+        exito("No se encontraron errores semánticos")
+
+        titulo("ASA DECORADO")
+        visitador.imprimir_asa_decorado(analizador.asa.raiz)
+
+    titulo("LISTO CALISTO")
 
 except FileNotFoundError:
-    print(f"ERROR: No se pudo abrir el archivo '{archivo}'")
-except Exception as e:
-    print(f"ERROR INESPERADO: {e}")
-    import traceback
+    error(f"No se pudo abrir el archivo '{archivo}'")
 
+except Exception as e:
+    error(f"Error inesperado: {e}")
+
+    import traceback
     traceback.print_exc()

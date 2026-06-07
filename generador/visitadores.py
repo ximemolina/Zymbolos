@@ -179,7 +179,7 @@ class VisitantePython:
             i += 2
 
         return resultado
-    
+
     # PARTE 2
 
     def visitar_BUCLES(self, nodo):
@@ -194,11 +194,11 @@ class VisitantePython:
 
         # Generamos el código Python
         return f"while {condicion}:\n{bloque}"
-    
+
     def visitar_CONDICIONALES(self, nodo):
         """
-        Condicionales ::= ¿(~)? Comparaciones ! Bloque  
-                        (¿"?" Comparaciones ! Bloque)*  
+        Condicionales ::= ¿(~)? Comparaciones ! Bloque
+                        (¿"?" Comparaciones ! Bloque)*
                         ("?" Bloque)? ¿!
         """
         lineas = []
@@ -232,7 +232,7 @@ class VisitantePython:
             i += 1
 
         return "\n".join(lineas)
-    
+
     def visitar_ASIGNACION(self, nodo):
         """
         Asignacion ::= “\” Frase "=" (Bool | ExpresionesMatematicas | Lista) "!"
@@ -247,9 +247,9 @@ class VisitantePython:
         Valor ::=  Bool | ExpresionesMatematicas | AccesoLista
         """
         resultado = self.visitar(nodo.nodos[0])
-        
+
         return resultado
-    
+
     def visitar_LISTA(self, nodo):
         """
         Lista::=  "{" (Termino ("," Termino)*)? "}"
@@ -260,13 +260,13 @@ class VisitantePython:
             terminos = [self.visitar(hijo) for hijo in nodo.nodos]
 
             return f"[{', '.join(terminos)}]"
-        
+
     def visitar_INDICE(self, nodo):
         """
         Indice ::= Numero | Frase
         """
         return self.visitar(nodo.nodos[0])
-    
+
     def visitar_ACCESOLISTA(self, nodo):
         """
         AccesoLista ::= “¨” Frase “[‘ Indice “]”
@@ -275,7 +275,7 @@ class VisitantePython:
         indice = self.visitar(nodo.nodos[1])
 
         return f"{nombre}[{indice}]"
-    
+
     def visitar_ASIGNACIONELEMENTOLISTA(self, nodo):
         """
         AsignacionElementoLista ::= AccesoLista "=" Termino
@@ -284,10 +284,10 @@ class VisitantePython:
         termino = self.visitar(nodo.nodos[1])
 
         return f"{accesoLista} = {termino}"
-    
+
     def visitar_TERMINO(self, nodo):
         """
-        Termino ::= Numero | Frase | Cadena 
+        Termino ::= Numero | Frase | Cadena
         """
         return self.visitar(nodo.nodos[0])
 

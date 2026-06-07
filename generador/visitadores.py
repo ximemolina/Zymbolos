@@ -179,3 +179,50 @@ class VisitantePython:
             i += 2
 
         return resultado
+    
+  
+    # PARTE 3: Gramática
+  
+
+    def visitar_NUMERO(self, nodo):
+        return str(nodo.valor)
+
+    def visitar_CADENA(self, nodo):
+        return str(nodo.valor)
+
+    def visitar_BOOL(self, nodo):
+        if nodo.valor == "VV":
+            return "True"
+        elif nodo.valor == "FF":
+            return "False"
+        return str(nodo.valor)
+
+    def visitar_FRASE(self, nodo):
+        return str(nodo.valor)
+
+    def visitar_TERMINO(self, nodo):
+        if nodo.nodos:
+            return self.visitar(nodo.nodos[0])
+        return ""
+
+    def visitar_SIMBOLO(self, nodo):
+        if nodo.valor == "^":
+            return "**" 
+        return str(nodo.valor)
+
+    def visitar_COMPARATIVO(self, nodo):
+        return str(nodo.valor)
+
+    def visitar_COMPUERTA_LOGICA(self, nodo):
+        if nodo.valor == "&&":
+            return "and"
+        elif nodo.valor == "||":
+            return "or"
+        return str(nodo.valor)
+
+    def visitar_TIPO(self, nodo):
+        return ""
+
+    def visitar_COMENTARIOS(self, nodo):
+        texto = str(nodo.valor).strip("_")
+        return f"# {texto}"

@@ -179,6 +179,117 @@ class VisitantePython:
             i += 2
 
         return resultado
+    
+    # PARTE 2
+
+    def visitar_BUCLES(self, nodo):
+        """
+        Bucles ::= “@” Comparaciones ! Bloque “@”  “!”
+        """
+        # El primer hijo es la condición (Comparaciones)
+        condicion = self.visitar(nodo.nodos[0])
+
+        # El segundo hijo es el bloque (cuerpo del bucle)
+        bloque = self.visitar(nodo.nodos[1])
+
+        # Generamos el código Python
+        return f"while {condicion}:\n{bloque}"
+    
+    def visitar_CONDICIONALES(self, nodo):
+        """
+        Condicionales ::= ¿(~)? Comparaciones ! Bloque  
+                        (¿"?" Comparaciones ! Bloque)*  
+                        ("?" Bloque)? ¿!
+        """
+        lineas = []
+
+        i = 0
+        # Primer hijo: condición principal
+        condicion = self.visitar(nodo.nodos[i])
+        bloque = self.visitar(nodo.nodos[i + 1])
+        lineas.append(f"if {condicion}:\n{bloque}")
+        i += 2
+
+        # Elif(s)
+        while i < len(nodo.nodos):
+            actual = nodo.nodos[i]
+
+            # Si es una comparación, significa que viene un elif
+            if actual.tipo.name == "COMPARACIONES":
+                condicion = self.visitar(actual)
+                bloque = self.visitar(nodo.nodos[i + 1])
+                lineas.append(f"elif {condicion}:\n{bloque}")
+                i += 2
+                continue
+
+            # Si es un bloque sin condición → else
+            if actual.tipo.name == "BLOQUE":
+                bloque = self.visitar(actual)
+                lineas.append(f"{self.tab()}else:\n{bloque}")
+                i += 1
+                break
+
+            i += 1
+
+        return "\n".join(lineas)
+    
+    def visitar_ASIGNACION(self, nodo):
+        """
+        Asignacion ::= “\” Frase "=" (Bool | ExpresionesMatematicas | Lista) "!"
+        """
+        nombre = nodo.nodos[0].valor
+        valor = self.visitar(nodo.nodos[1])
+
+        return f"{nombre} = {valor}"
+
+    def visitar_VALOR(self, nodo):
+        """
+        Valor ::=  Bool | ExpresionesMatematicas | AccesoLista
+        """
+        resultado = self.visitar(nodo.nodos[0])
+        
+        return resultado
+    
+    def visitar_LISTA(self, nodo):
+        """
+        Lista::=  "{" (Termino ("," Termino)*)? "}"
+        """
+        if not nodo.nodos:
+            return "[]"
+        else:
+            terminos = [self.visitar(hijo) for hijo in nodo.nodos]
+
+            return f"[{', '.join(terminos)}]"
+        
+    def visitar_INDICE(self, nodo):
+        """
+        Indice ::= Numero | Frase
+        """
+        return self.visitar(nodo.nodos[0])
+    
+    def visitar_ACCESOLISTA(self, nodo):
+        """
+        AccesoLista ::= “¨” Frase “[‘ Indice “]”
+        """
+        nombre = nodo.nodos[0].valor
+        indice = self.visitar(nodo.nodos[1])
+
+        return f"{nombre}[{indice}]"
+    
+    def visitar_ASIGNACIONELEMENTOLISTA(self, nodo):
+        """
+        AsignacionElementoLista ::= AccesoLista "=" Termino
+        """
+        accesoLista = self.visitar(nodo.nodos[0])
+        termino = self.visitar(nodo.nodos[1])
+
+        return f"{accesoLista} = {termino}"
+    
+    def visitar_TERMINO(self, nodo):
+        """
+        Termino ::= Numero | Frase | Cadena 
+        """
+        return self.visitar(nodo.nodos[0])
 
     # PARTE 3: Gramática
 

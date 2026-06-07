@@ -179,10 +179,8 @@ class VisitantePython:
             i += 2
 
         return resultado
-    
-  
+
     # PARTE 3: Gramática
-  
 
     def visitar_NUMERO(self, nodo):
         return str(nodo.valor)
@@ -207,7 +205,7 @@ class VisitantePython:
 
     def visitar_SIMBOLO(self, nodo):
         if nodo.valor == "^":
-            return "**" 
+            return "**"
         return str(nodo.valor)
 
     def visitar_COMPARATIVO(self, nodo):

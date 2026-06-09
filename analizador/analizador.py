@@ -486,7 +486,6 @@ class Analizador:
             # Verificar frase
             nodos_nuevos += [self.__analizar_frase()]  # le puse ()
 
-
             # Verificar componente obligatorio
             self.__verificar("=")
 
@@ -504,7 +503,9 @@ class Analizador:
             # Caso 3: Identificador puede ser llamada a función o expresión matemática
             elif self.token_actual.tipo == TipoToken.IDENTIFICADOR:
                 # Miramos el siguiente token para distinguir llamada de función
-                next_token = self.lista_componentes[0] if self.lista_componentes else None
+                next_token = (
+                    self.lista_componentes[0] if self.lista_componentes else None
+                )
                 if next_token and (
                     next_token.tipo == TipoToken.NUMERO
                     or next_token.tipo == TipoToken.IDENTIFICADOR

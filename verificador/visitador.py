@@ -662,8 +662,6 @@ class Visitador:
         )
         return None
 
-    
-
     def imprimir_asa_decorado(self, nodo, nivel=0):
         if nodo is None:
             return
@@ -679,15 +677,11 @@ class Visitador:
 
         if nodo.atributos.get("def"):
             d = nodo.atributos["def"]
-            print(
-                f"{prefijo}{Fore.GREEN}│   Def: {d['nombre']} : {d['tipo']}"
-            )
+            print(f"{prefijo}{Fore.GREEN}│   Def: {d['nombre']} : {d['tipo']}")
 
         if nodo.atributos.get("ref"):
             r = nodo.atributos["ref"]
-            print(
-                f"{prefijo}{Fore.MAGENTA}│   Ref: {r['nombre']} : {r['tipo']}"
-            )
+            print(f"{prefijo}{Fore.MAGENTA}│   Ref: {r['nombre']} : {r['tipo']}")
 
         for hijo in getattr(nodo, "nodos", []):
             self.imprimir_asa_decorado(hijo, nivel + 1)

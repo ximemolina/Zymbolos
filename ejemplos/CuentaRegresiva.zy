@@ -1,10 +1,9 @@
-. CuentaRegresiva >> NNN << NNN inicio !
+. CuentaRegresiva >> OOO << NNN inicio !
 : actual NNN = inicio !
 
 @ actual >= 0 !
->> actual !
+>>> actual !
 \ actual = actual - 1 !
 @ !
 
->> actual !
 . !

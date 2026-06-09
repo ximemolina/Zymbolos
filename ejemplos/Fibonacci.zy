@@ -5,11 +5,12 @@
 : i NNN = 0 !
 
 @ i <= n !
->> a !
 \ temp = a + b !
 \ a = b !
 \ b = temp !
 \ i = i + 1 !
 @ !
+
+>> a !
 
 . !

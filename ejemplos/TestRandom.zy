@@ -1,0 +1,8 @@
+. Main >> NNN << !
+\ a = random !
+\ b = randint 1 10 !
+>> a !
+>> b !
+. !
+
+Main !

@@ -66,10 +66,17 @@ class Visitador:
     def __init__(self):
         self.tabla_simbolos = TablaSimbolos()
         self.errores = []
+        # Funciones declaradas (incluye predeterminadas)
         self.funciones = {}
         self.funcion_actual = None
 
         self._funcion_tiene_retorno = False
+
+        # Registrar funciones predeterminadas disponibles en el ambiente
+        # 'random' -> devuelve NNN, sin parámetros
+        # 'randint' -> devuelve NNN, recibe dos NNN (limites)
+        self.funciones["random"] = {"return": "NNN", "params": []}
+        self.funciones["randint"] = {"return": "NNN", "params": ["NNN", "NNN"]}
 
     def imprimir_tabla_parcial(self, accion, nombre=None):
         """Imprime la tabla de símbolos cada vez que cambia.

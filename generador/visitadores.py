@@ -242,6 +242,41 @@ class VisitantePython:
 
         return f"{nombre} = {valor}"
 
+    def visitar_FUNCIONESPREDETERMINADAS(self, nodo):
+        """
+        FuncionesPredeterminadas ::=  (<<< | >>> | >>| <<) (Termino | Tipo | Lista | Bool) + !
+        """
+        operador = nodo.valor
+        argumentos = [self.visitar(arg) for arg in nodo.nodos]
+
+        if operador == ">>":
+            # retorno de función
+            if argumentos:
+                return f"return {argumentos[0]}"
+            return "return"
+
+        if operador == ">>>":
+            # print con salto
+            return f"print({', '.join(argumentos)})"
+
+        if operador == "<<":
+            # entrada simple: asignar lectura a variable si se pasó una frase
+            if nodo.nodos and nodo.nodos[0].tipo.name == "FRASE":
+                var = argumentos[0]
+                return f"{var} = leer()"
+            # si no, simplemente leer y descartar
+            return "leer()"
+
+        if operador == "<<<":
+            # entrada especial (leer y convertir a número si es necesario)
+            if nodo.nodos and nodo.nodos[0].tipo.name == "FRASE":
+                var = argumentos[0]
+                return f"{var} = leer()"
+            return "leer()"
+
+        # fallback: concatenar argumentos
+        return ", ".join(argumentos)
+
     def visitar_VALOR(self, nodo):
         """
         Valor ::=  Bool | ExpresionesMatematicas | AccesoLista

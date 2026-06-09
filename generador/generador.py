@@ -11,7 +11,6 @@ class Generador:
 # ==========================================
 # Ambiente estándar de Zymbolos
 # ==========================================
-
 def imprimir(*valores):
     print(*valores)
 
@@ -23,6 +22,17 @@ def leer_numero():
 
 def leer_entero():
     return int(input())
+
+# Funciones aleatorias predeterminadas
+import random as _random
+
+def random():
+    # Devuelve un número flotante en [0.0, 1.0).
+    return _random.random()
+
+def randint(a, b):
+    # Devuelve un entero aleatorio entre a y b inclusive.
+    return _random.randint(int(a), int(b))
 
 """
 

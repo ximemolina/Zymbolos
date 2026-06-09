@@ -1,5 +1,8 @@
 import enum
 from analizador.nodo import Nodo, TipoNodo
+from colorama import init, Fore, Style
+
+init(autoreset=True)
 
 
 class TablaSimbolos:
@@ -652,24 +655,32 @@ class Visitador:
         )
         return None
 
+    
+
     def imprimir_asa_decorado(self, nodo, nivel=0):
-        """Imprime el ASA en pre-orden mostrando decoraciones (definición/referencia) por nodo.
-        Formato simple con indentación por niveles para asemejarse al estilo de `mostrar_asa`.
-        """
         if nodo is None:
             return
 
-        indent = "  " * nivel
-        print(f"{indent}< {nodo.tipo.value}, {nodo.valor}, {nodo.atributos}> \n")
+        prefijo = "│   " * nivel
 
-        # imprimir decoraciones si existen
+        print(
+            f"{prefijo}"
+            f"{Fore.CYAN}├── "
+            f"{Fore.WHITE}{nodo.tipo.value}"
+            f"{Fore.YELLOW} ({nodo.valor})"
+        )
+
         if nodo.atributos.get("def"):
             d = nodo.atributos["def"]
-            print(f"{indent}  [definición] {d['nombre']} : {d['tipo']} \n")
+            print(
+                f"{prefijo}{Fore.GREEN}│   Def: {d['nombre']} : {d['tipo']}"
+            )
+
         if nodo.atributos.get("ref"):
             r = nodo.atributos["ref"]
-            print(f"{indent}  [referencia] {r['nombre']} : {r['tipo']} \n")
+            print(
+                f"{prefijo}{Fore.MAGENTA}│   Ref: {r['nombre']} : {r['tipo']}"
+            )
 
-        # recorrer hijos
-        for hijo in getattr(nodo, "nodos", []) or []:
+        for hijo in getattr(nodo, "nodos", []):
             self.imprimir_asa_decorado(hijo, nivel + 1)

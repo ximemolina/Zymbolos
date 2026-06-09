@@ -486,8 +486,11 @@ class Analizador:
             # Verificar frase
             nodos_nuevos += [self.__analizar_frase()]  # le puse ()
 
+
             # Verificar componente obligatorio
             self.__verificar("=")
+
+            consumed_bang = False
 
             # Hay varios casos
             # Caso 1: Bool
@@ -498,10 +501,27 @@ class Analizador:
             elif self.token_actual.valor == "¨":
                 nodos_nuevos += [self.__analizar_acceso_lista()]
 
-            # Caso 3: ExpresionesMatematicas
+            # Caso 3: Identificador puede ser llamada a función o expresión matemática
+            elif self.token_actual.tipo == TipoToken.IDENTIFICADOR:
+                # Miramos el siguiente token para distinguir llamada de función
+                next_token = self.lista_componentes[0] if self.lista_componentes else None
+                if next_token and (
+                    next_token.tipo == TipoToken.NUMERO
+                    or next_token.tipo == TipoToken.IDENTIFICADOR
+                    or next_token.tipo == TipoToken.STRING
+                    or next_token.valor == "!"
+                ):
+                    # Es una llamada a función: Frase Termino* !
+                    nodos_nuevos += [self.__analizar_llamada_funcion()]
+                    # __analizar_llamada_funcion consume el '!' de la llamada
+                    consumed_bang = True
+                else:
+                    # No es llamada, es expresión matemática
+                    nodos_nuevos += [self.__analizar_expresiones_matematicas()]
+
+            # Caso 3b: Número o cadena -> expresiones matemáticas
             elif (
                 self.token_actual.tipo == TipoToken.NUMERO
-                or self.token_actual.tipo == TipoToken.IDENTIFICADOR
                 or self.token_actual.tipo == TipoToken.STRING
             ):
                 nodos_nuevos += [self.__analizar_expresiones_matematicas()]
@@ -510,8 +530,9 @@ class Analizador:
             elif self.token_actual.valor == "{":
                 nodos_nuevos += [self.__analizar_lista()]
 
-            # Verificar cierre de bloque
-            self.__verificar("!")
+            # Verificar cierre de bloque si no lo consumió la llamada
+            if not consumed_bang:
+                self.__verificar("!")
 
             return Nodo(TipoNodo.ASIGNACION, nodos=nodos_nuevos, atributos=atributos)
 

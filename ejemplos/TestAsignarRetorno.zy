@@ -1,0 +1,11 @@
+. funcionContador >> NNN << !
+: x NNN = 1 !
+>> x !
+. !
+
+. Main >> NNN << !
+\ contador = funcionContador !
+>> contador !
+. !
+
+Main !

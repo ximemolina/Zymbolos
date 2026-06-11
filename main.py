@@ -1,5 +1,7 @@
 import sys
 import importlib.machinery
+import subprocess
+import os
 
 importlib.machinery.SOURCE_SUFFIXES.append(".zy")
 
@@ -29,6 +31,11 @@ if len(sys.argv) != 2:
     sys.exit(1)
 
 archivo = sys.argv[1]
+
+nombre_base = os.path.splitext(os.path.basename(archivo))[0]
+carpeta_salida = "python"
+os.makedirs(carpeta_salida, exist_ok=True)
+archivo_salida = os.path.join(carpeta_salida, nombre_base + ".py")
 
 try:
     todos_los_tokens = []
@@ -70,24 +77,33 @@ try:
 
     if visitador.errores:
         error("Se encontraron errores semánticos:\n")
-
         for i, err in enumerate(visitador.errores, start=1):
             print(f"  [{i}] {err}")
+        sys.exit(1)  # 👈 detiene todo aquí si hay errores
 
-    else:
-        exito("No se encontraron errores semánticos")
+    exito("No se encontraron errores semánticos")
 
-        titulo("ASA DECORADO")
-        visitador.imprimir_asa_decorado(analizador.asa.raiz)
+    titulo("ASA DECORADO")
+    visitador.imprimir_asa_decorado(analizador.asa.raiz)
+
+    titulo("GENERANDO CÓDIGO")
 
     generador = Generador(analizador.asa)
-
     codigo_python = generador.generar()
 
-    with open("codigo_final.py", "w", encoding="utf-8") as archivo:
-        archivo.write(codigo_python)
+    with open(archivo_salida, "w", encoding="utf-8") as f:
+        f.write(codigo_python)
 
-    print("Código generado en codigo_final.py")
+    exito(f"Código generado en {archivo_salida}")
+
+    titulo("EJECUTANDO CÓDIGO GENERADO")
+    resultado = subprocess.run(
+        [sys.executable, archivo_salida],
+        capture_output=False
+    )
+
+    if resultado.returncode != 0:
+        error(f"El código generado terminó con código de salida {resultado.returncode}")
 
     titulo("LISTO CALISTO")
 
@@ -98,5 +114,4 @@ except Exception as e:
     error(f"Error inesperado: {e}")
 
     import traceback
-
     traceback.print_exc()

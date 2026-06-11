@@ -97,10 +97,7 @@ try:
     exito(f"Código generado en {archivo_salida}")
 
     titulo("EJECUTANDO CÓDIGO GENERADO")
-    resultado = subprocess.run(
-        [sys.executable, archivo_salida],
-        capture_output=False
-    )
+    resultado = subprocess.run([sys.executable, archivo_salida], capture_output=False)
 
     if resultado.returncode != 0:
         error(f"El código generado terminó con código de salida {resultado.returncode}")
@@ -114,4 +111,5 @@ except Exception as e:
     error(f"Error inesperado: {e}")
 
     import traceback
+
     traceback.print_exc()

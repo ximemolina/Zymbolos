@@ -568,7 +568,11 @@ class Visitador:
         if node.nodos and node.nodos[-1].tipo == TipoNodo.BLOQUE:
             node.nodos[-1].visitar(self)
 
-        if return_type is not None and return_type != "OOO" and not self._funcion_tiene_retorno:
+        if (
+            return_type is not None
+            and return_type != "OOO"
+            and not self._funcion_tiene_retorno
+        ):
             self.errores.append(
                 f"Función '{nombre}' declara tipo de retorno {return_type} pero no contiene "
                 f"ninguna instrucción '>>' de retorno en línea {node.atributos.get('linea')} "

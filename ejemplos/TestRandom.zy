@@ -1,7 +1,7 @@
 . Main >> NNN << !
-\ a = random !
+: b NNN = 0 !
 \ b = randint 1 10 !
->> a !
+
 >> b !
 . !
 

@@ -1,0 +1,236 @@
+. UnirTexto >> CCC << CCC a CCC b !
+: Res CCC = " " !
+
+\ Res = a + " " !
+\ Res = Res + b !
+
+>> Res !
+. !
+
+. NumATexto >> CCC << NNN a !
+: Res CCC = " " !
+
+¿ a == 1 !
+\ Res = "1" !
+¿!
+
+¿ a == 2 !
+\ Res = "2" !
+¿!
+
+¿ a == 3 !
+\ Res = "3" !
+¿!
+
+¿ a == 4 !
+\ Res = "4" !
+¿!
+
+¿ a == 5 !
+\ Res = "5" !
+¿!
+
+¿ a == 6 !
+\ Res = "6" !
+¿!
+
+¿ a == 7 !
+\ Res = "7" !
+¿!
+
+¿ a == 8 !
+\ Res = "8" !
+¿!
+
+¿ a == 9 !
+\ Res = "9" !
+¿!
+
+¿ a == 10 !
+\ Res = "10" !
+¿!
+
+¿ a > 10 !
+\ Res = "El limite fue 10... " !
+¿!
+
+>> Res !
+. !
+
+. PrintParticipante >> OOO << CCC carril CCC progreso !
+: aux CCC = "" !
+: recorrido CCC = "" !
+
+\ aux = UnirTexto carril "|" !
+\ recorrido = UnirTexto aux progreso !
+
+>>> recorrido !
+
+. !
+
+. ActualizarProgreso >> CCC << NNN pasos CCC simbolo !
+: i NNN = 0 !
+: progreso CCC = simbolo !
+
+@ i < pasos !
+\ progreso = UnirTexto "." progreso !
+\ i = i + 1 !
+@ !
+
+>> progreso !
+
+. !
+
+. CarreraCaracoles >> OOO << CCC simbolo NNN jdr1 NNN jdr2 NNN jdr3 NNN jdr4 !
+: pasos NNN = 0 !
+: i NNN = 1 !
+: progreso CCC = simbolo !
+: carril CCC = "" !
+: rondas NNN = 0 !
+
+@ i <= 4 !
+¿ i == 1 !
+\ progreso = ActualizarProgreso jdr1 "@" !
+¿ !
+
+¿ i == 2 !
+\ progreso = ActualizarProgreso jdr2 "@" !
+¿ !
+
+¿ i == 3 !
+\ progreso = ActualizarProgreso jdr3 "@" !
+¿ !
+
+¿ i == 4 !
+\ progreso = ActualizarProgreso jdr4 "@" !
+¿ !
+
+\ carril = NumATexto i !
+
+PrintParticipante carril progreso !
+
+\ i = i + 1 !
+@ !
+
+. !
+
+. CarreraCaracolesManager >> OOO << CCC simbolo !
+: rondas NNN = 0 !
+: pasos NNN = 0 !
+
+>>> "★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★" !
+>>> "★     INICIA LA CARRERA DE CARACOLES    ★" !
+>>> "★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★" !
+
+_ Guardo el progreso de pasos de cada jugador _
+: jdr1 NNN = 0 !
+: jdr2 NNN = 0 !
+: jdr3 NNN = 0 !
+: jdr4 NNN = 0 !
+
+@ rondas <= 50 !
+: mayor NNN = 0 !
+
+>>> "Dale Enter..." !
+<<< "Enter" !
+
+_ Para generar aleatoriamente la cantidad de pasos a agregar para cada jugador _
+\ pasos = randint 1 10 !
+\ jdr1 = jdr1 + pasos !
+¿ mayor < pasos !
+\ mayor = 0 + pasos !
+¿ !
+
+\ pasos = randint 1 10 !
+\ jdr2 = jdr2 + pasos !
+¿ mayor < pasos !
+\ mayor = 0 + pasos !
+¿ !
+
+\ pasos = randint 1 10 !
+\ jdr3 = jdr3 + pasos !
+¿ mayor < pasos !
+\ mayor = 0 + pasos !
+¿ !
+
+\ pasos = randint 1 10 !
+\ jdr4 = jdr4 + pasos !
+¿ mayor < pasos !
+\ mayor = 0 + pasos !
+¿ !
+
+CarreraCaracoles simbolo jdr1 jdr2 jdr3 jdr4 !
+
+\ rondas = rondas + mayor !
+
+@ !
+
+>>> "★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★" !
+>>> "★            FIN DE LA CARRERA          ★" !
+>>> "★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★" !
+
+_ Gana solo 1 de los jugadores _
+¿ jdr1 > jdr2 && jdr1 > jdr3 && jdr1 > jdr4 !
+>>> "Jugador 1 ha ganado" !
+¿ !
+
+¿ jdr2 > jdr1 && jdr2 > jdr3 && jdr2 > jdr4 !
+>>> "Jugador 2 ha ganado" !
+¿ !
+
+¿ jdr3 > jdr2 && jdr3 > jdr1 && jdr3 > jdr4 !
+>>> "Jugador 3 ha ganado" !
+¿ !
+
+¿ jdr4 > jdr2 && jdr4 > jdr3 && jdr4 > jdr1 !
+>>> "Jugador 4 ha ganado" !
+¿ !
+
+_ Hay empate entre 2 jugadores _
+¿ jdr1 == jdr2 && jdr1 > jdr3 && jdr1 > jdr4 !
+>>> "Jugador 1 y 2 ha ganado" !
+¿ !
+
+¿ jdr1 == jdr3 && jdr1 > jdr2 && jdr1 > jdr4 !
+>>> "Jugador 1 y 3 ha ganado" !
+¿ !
+
+¿ jdr1 == jdr4 && jdr1 > jdr3 && jdr1 > jdr2 !
+>>> "Jugador 1 y 4 ha ganado" !
+¿ !
+
+¿ jdr2 == jdr3 && jdr2 > jdr1 && jdr2 > jdr4 !
+>>> "Jugador 2 y 3 ha ganado" !
+¿ !
+
+¿ jdr2 == jdr4 && jdr2 > jdr1 && jdr2 > jdr3 !
+>>> "Jugador 2 y 4 ha ganado" !
+¿ !
+
+¿ jdr3 == jdr4 && jdr3 > jdr1 && jdr3 > jdr2 !
+>>> "Jugador 3 y 4 ha ganado" !
+¿ !
+
+_ Hay empate entre 3 jugadores _
+¿ jdr1 == jdr2 && jdr1 == jdr3 && jdr1 > jdr4 !
+>>> "Jugador 1, 2 y 3 ha ganado" !
+¿ !
+
+¿ jdr1 == jdr2 && jdr1 == jdr4 && jdr1 > jdr3 !
+>>> "Jugador 1, 2 y 4 ha ganado" !
+¿ !
+
+¿ jdr1 == jdr4 && jdr1 == jdr3 && jdr1 > jdr2 !
+>>> "Jugador 1, 3 y 4 ha ganado" !
+¿ !
+
+¿ jdr2 == jdr3 && jdr2 == jdr4 && jdr2 > jdr1 !
+>>> "Jugador 2, 3 y 4 ha ganado" !
+¿ !
+
+_ Hay empate entre los 4 jugadores _
+¿ jdr1 == jdr2 && jdr1 == jdr3 && jdr1 == jdr4 !
+>>> "Todos los jugadores quedaron en empate" !
+¿ !
+
+. !

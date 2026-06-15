@@ -135,25 +135,25 @@ _ Guardo el progreso de pasos de cada jugador _
 <<< "Enter" !
 
 _ Para generar aleatoriamente la cantidad de pasos a agregar para cada jugador _
-\ pasos = randint 1 10 !
+\ pasos = randint 1 5 !
 \ jdr1 = jdr1 + pasos !
 ¿ mayor < pasos !
 \ mayor = 0 + pasos !
 ¿ !
 
-\ pasos = randint 1 10 !
+\ pasos = randint 1 5 !
 \ jdr2 = jdr2 + pasos !
 ¿ mayor < pasos !
 \ mayor = 0 + pasos !
 ¿ !
 
-\ pasos = randint 1 10 !
+\ pasos = randint 1 5 !
 \ jdr3 = jdr3 + pasos !
 ¿ mayor < pasos !
 \ mayor = 0 + pasos !
 ¿ !
 
-\ pasos = randint 1 10 !
+\ pasos = randint 1 5 !
 \ jdr4 = jdr4 + pasos !
 ¿ mayor < pasos !
 \ mayor = 0 + pasos !
